@@ -61,6 +61,27 @@
   )
 )
 
+(define (size solution)
+  (cond
+    ((or (null? solution) (not (list? solution))) (raise-argument-error 'size "list" solution))
+    (else (length solution))
+  )
+)
+
+(define (generate-row size (row '()))
+  (cond
+    ((equal? (length row) size) row)
+    (else (generate-row size (generate-row size (append row (list 0)))))
+  )
+)
+
+(define (generate-board size (board '()))
+  (cond
+    ((equal? (length board) size) board)
+    (else (generate-board size (append board (list (generate-row size)))))
+  )
+)
+
 
 ; MAIN FUNCTIONS ------------------------------------------------------------------------------------------------------------------
 
