@@ -5,19 +5,20 @@
   Valerie M. Hernández Fernández (https://github.com/valeriehernandez-7)
   Óscar M. Soto Varela (https://github.com/CAMANEM)
 
-  Programación Funcional
-  Tarea
+  Knight's Tour (GUI)
+  Extra-class
 
-  Instituto Tecnológico de Costa Rica
-  Campus Tecnológico Central Cartago
-  Área Académica Ingeniería en Computadores
+  Costa Rica Institute of Technology
+  Cartago Central Technology Campus
+  Computer Engineering Academic Area
 
-  CE 3104 Lenguajes, Compiladores e Intérpretes
-  Ing. Marco Rivera Meneses, MGP
-  Grupo 01
+  CE 3104 Languages, Compilers and Interpreters
+  Eng. Marco Rivera Meneses, MGP
+  Class 01
 
-  I Semestre
+  I Semester
   2023
 |#
 
-(displayln "Knight 🐴")
+
+(displayln "Knight's Tour 🐴")
