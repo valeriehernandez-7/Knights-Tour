@@ -1,4 +1,4 @@
-# Knight
+# Knight's Tour
 
 ### DEMO
 
@@ -10,7 +10,7 @@
 
 _description..._
 
-> Check out more information at [Knight 🐴 Docs](https://github.com/valeriehernandez-7/Knight/blob/main/docs)
+> Check out more information at [Knight's Tour 🐴 Docs](https://github.com/valeriehernandez-7/Knight/blob/main/docs)
 
 ### Contributors
 
@@ -24,7 +24,7 @@ _description..._
 
 ### Site
 
-[Cartago Central Technological Campus](https://www.tec.ac.cr/ubicaciones/campus-tecnologico-central-cartago)
+[Cartago Central Technology Campus](https://www.tec.ac.cr/ubicaciones/campus-tecnologico-central-cartago)
 
 ### Degree
 
