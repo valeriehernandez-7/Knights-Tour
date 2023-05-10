@@ -82,6 +82,36 @@
   )
 )
 
+(define (check-col position row (col 0))
+  (cond
+    ((equal? (second position) col) (car row))
+    (else (check-col position (cdr row) (+ col 1)))
+  )
+)
+
+(define (check-row position board (row 0))
+  (cond
+    ((equal? (first position) row) (check-col position (car board)))
+    (else (check-row position (cdr board) (+ row 1)))
+  )
+)
+
+(define (check-position position board)
+  (cond
+    ((or (null? position) (null? board)) (error "check-position arguments must be non-null"))
+    (else (check-row position board))
+  )
+)
+
+(define (available? position board)
+  (cond
+    ((or (null? position) (null? board)) (error "available? arguments must be non-null"))
+    ((not (valid-size? (size board))) (raise-argument-error 'available? "board size doesn't meet the requirements" board))
+    ((not (valid-position? position (size board))) (raise-argument-error 'available? "position doesn't meet the requirements" position))
+    (else (zero? (check-position position board)))
+  )
+)
+
 
 ; MAIN FUNCTIONS ------------------------------------------------------------------------------------------------------------------
 
@@ -104,8 +134,8 @@
 
 ; TEST ----------------------------------------------------------------------------------------------------------------------------
 
-(define board-size 8)
-(define knight-position '(0 0))
+(define board-size 4)
+(define knight-position '(0 3))
 (define sol 
  '(
     (01 12 07 00)
@@ -119,6 +149,11 @@
 
 (valid-size? board-size)
 (valid-position? knight-position board-size)
+(size sol)
+(generate-board board-size)
+(check-position knight-position sol)
+(available? knight-position sol)
+
 (solution board-size knight-position)
 (all board-size knight-position)
 (test board-size sol)
