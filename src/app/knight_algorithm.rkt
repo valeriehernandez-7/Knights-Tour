@@ -112,6 +112,47 @@
   )
 )
 
+(define (clear-moves moves (clean '()))
+  (cond
+    ((null? moves) clean)
+    (else 
+      (cond
+        ((or (negative? (first (car moves))) (negative? (second (car moves)))) (clear-moves (cdr moves) clean))
+        (else (clear-moves (cdr moves) (append clean (list (car moves)))))
+      )
+    )
+  )
+)
+
+(define (generate-moves row col)
+  (cond
+    ((or (null? row) (null? col)) (error "possible-moves arguments must be non-null"))
+    (else 
+      (clear-moves
+        (list
+          (list (- row 2) (- col 1)) ; 2⬆ 1⬅
+          (list (- row 2) (+ col 1)) ; 2⬆ 1➡
+          (list (- row 1) (- col 2)) ; 1⬆ 2⬅
+          (list (- row 1) (+ col 2)) ; 1⬆ 2➡
+          (list (+ row 1) (- col 2)) ; 1⬇ 2⬅
+          (list (+ row 1) (+ col 2)) ; 1⬇ 2➡
+          (list (+ row 2) (- col 1)) ; 2⬇ 1⬅
+          (list (+ row 2) (+ col 1)) ; 2⬇ 1➡
+        )
+      )
+    )
+  )
+)
+
+(define (possible-moves position board-size)
+  (cond
+    ((or (null? position) (null? board-size)) (error "possible-moves arguments must be non-null"))
+    ((not (valid-size? board-size)) (raise-argument-error 'possible-moves "board-size doesn't meet the requirements" board-size))
+    ((not (valid-position? position board-size)) (raise-argument-error 'possible-moves "position doesn't meet the requirements" position))
+    (else (generate-moves (first position) (second position)))
+  )
+)
+
 
 ; MAIN FUNCTIONS ------------------------------------------------------------------------------------------------------------------
 
@@ -153,6 +194,8 @@
 (generate-board board-size)
 (check-position knight-position sol)
 (available? knight-position sol)
+(possible-moves '(2 2) 5)
+(possible-moves '(0 0) 5)
 
 (solution board-size knight-position)
 (all board-size knight-position)
