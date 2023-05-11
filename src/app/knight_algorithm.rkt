@@ -99,6 +99,39 @@
   )
 )
 
+(define (print-col row)
+  (cond
+    ((null? row) row)
+    (else 
+      (display " ")(display (~r (car row) #:min-width 2 #:pad-string "0"))(display " ")
+      (print-col (cdr row))
+    )
+  )
+)
+
+(define (print-row board)
+  (cond
+    ((null? board) board)
+    (else 
+      (display "(")
+      (print-col (car board))
+      (displayln ")")
+      (print-row (cdr board))
+    )
+  )
+)
+
+(define (print-board (board '()))
+  (cond
+    ((null? board) board)
+    (else
+      (displayln "(")
+      (print-row board)
+      (displayln ")")
+    )
+  )
+)
+
 (define (check-col position row (col 0))
   (cond
     ((equal? (second position) col) (car row))
@@ -214,9 +247,19 @@
 
 ; TEST ----------------------------------------------------------------------------------------------------------------------------
 
+#|
+       0  1  2  3  4
+  0  (01 06 15 10 21)
+  1  (14 09 20 05 16)
+  2  (19 02 07 22 11)
+  3  (08 13 24 17 04)
+  4  (25 18 03 12 23)
+|#
+
 (define board-size 4)
 (define knight-position '(0 3))
-(define sol 
+
+(define board 
  '(
     (01 06 15 10 21)
     (14 09 20 05 16)
@@ -226,18 +269,29 @@
   )
 )
 
-(~r 0 #:min-width 2 #:pad-string "0")
+(define sol
+  '(
+    (0 0) (2 1) (4 2) (3 4) (1 3) ; 01 - 05
+    (0 1) (2 2) (3 0) (1 1) (0 3) ; 06 - 10
+    (2 4) (4 3) (3 1) (1 0) (0 2) ; 11 - 15
+    ( ) ( ) ( ) ( ) ( ) ; 16 - 20
+    ( ) ( ) ( ) ( ) ( ) ; 21 - 25
+  )
+)
 
 (valid-size? board-size)
 (valid-position? knight-position board-size)
-(size sol)
+(tour? '(0 0) 5)
+(tour? '(1 0) 5)
+(size board)
 (generate-board board-size)
-(check-position knight-position sol)
-(available? knight-position sol)
+(print-board board)
+(check-position knight-position board)
+(available? knight-position board)
 (get-edges '(2 2) 5)
 (get-edges '(0 0) 5)
 
 (solution board-size knight-position)
 (all board-size knight-position)
-(test board-size sol)
-(paint board-size sol)
+(test board-size board)
+(paint board-size board)
