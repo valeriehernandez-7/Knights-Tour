@@ -42,7 +42,7 @@
 #|
   Checks if the position is a list of two non-negative integers and if the position 
   exists on the board using the board size
-  @param knight-position list with two non-negative integers (zero and positive) as initial position of the knight with the format '(column row)
+  @param knight-position list with two non-negative integers (zero and positive) as initial position of the knight with the format '(row column)
   @param board-size exact-integer greater than 4
   @return boolean (true: the position meets the conditions || false: the position doesn't meet the conditions) or raise-argument-error
 |#
@@ -58,6 +58,23 @@
       (raise-argument-error 'valid-position? "two exact-nonnegative-integer list '(0 0)" knight-position)
     )
     (else (and (< (first knight-position) board-size) (< (second knight-position) board-size)))
+  )
+)
+
+
+#|
+  Checks if the Knight's tour is posible, using the 
+  premise "no complete tours exist for square boards of odd dimensions when the tour starts on an odd position (row + column)".
+  To understand the premise check out the article at https://link.springer.com/chapter/10.1007/978-981-13-5802-9_16
+  @param knight-position list with two non-negative integers (zero and positive) as initial position of the knight with the format '(row column)
+  @param board-size exact-integer greater than 4
+  @return boolean (true: even board size or even position (row + column) at odd board size || false: odd position (row + column) at odd board size )
+|#
+(define (tour? knight-position board-size)
+  (cond
+    ((even? board-size) #t)
+    (else (even? (+ (first knight-position) (second knight-position)))
+    )
   )
 )
 
@@ -112,23 +129,38 @@
   )
 )
 
-(define (clear-moves moves (clean '()))
+
+#|
+  Filters the possible positions list and removes off-board positions.
+  An off-board position has a negative row or column.
+  @param edges list of all L-pattern positions
+  @param clean list without off-board positions
+  @return list of possible L-pattern positions without off-board positions
+|#
+(define (filter-edges edges (clean '()))
   (cond
-    ((null? moves) clean)
+    ((null? edges) clean)
     (else 
       (cond
-        ((or (negative? (first (car moves))) (negative? (second (car moves)))) (clear-moves (cdr moves) clean))
-        (else (clear-moves (cdr moves) (append clean (list (car moves)))))
+        ((or (negative? (first (car edges))) (negative? (second (car edges)))) (filter-edges (cdr edges) clean))
+        (else (filter-edges (cdr edges) (append clean (list (car edges)))))
       )
     )
   )
 )
 
-(define (generate-moves row col)
+
+#|
+  Retrieves all possible positions by applying the knight movement rule (L-pattern) to the received row's position and col's position.
+  @param row non-negative integer [0, board-size]
+  @param col non-negative integer [0, board-size]
+  @return list of all (8) L-pattern positions
+|#
+(define (generate-edges row col)
   (cond
-    ((or (null? row) (null? col)) (error "possible-moves arguments must be non-null"))
+    ((or (null? row) (null? col)) (error "generate-edges arguments must be non-null"))
     (else 
-      (clear-moves
+      (filter-edges
         (list
           (list (- row 2) (- col 1)) ; 2⬆ 1⬅
           (list (- row 2) (+ col 1)) ; 2⬆ 1➡
@@ -144,12 +176,19 @@
   )
 )
 
-(define (possible-moves position board-size)
+
+#|
+  Retrieves the edges (possible positions) of the node (current position)
+  @param position list with two non-negative integers (zero and positive) as initial position (node) of the knight with the format '(row column)
+  @param board-size exact-integer greater than 4
+  @return list of knight's possible positions as edges
+|#
+(define (get-edges position board-size)
   (cond
-    ((or (null? position) (null? board-size)) (error "possible-moves arguments must be non-null"))
-    ((not (valid-size? board-size)) (raise-argument-error 'possible-moves "board-size doesn't meet the requirements" board-size))
-    ((not (valid-position? position board-size)) (raise-argument-error 'possible-moves "position doesn't meet the requirements" position))
-    (else (generate-moves (first position) (second position)))
+    ((or (null? position) (null? board-size)) (error "get-edges arguments must be non-null"))
+    ((not (valid-size? board-size)) (raise-argument-error 'get-edges "board-size doesn't meet the requirements" board-size))
+    ((not (valid-position? position board-size)) (raise-argument-error 'get-edges "position doesn't meet the requirements" position))
+    (else (generate-edges (first position) (second position)))
   )
 )
 
@@ -195,8 +234,8 @@
 (generate-board board-size)
 (check-position knight-position sol)
 (available? knight-position sol)
-(possible-moves '(2 2) 5)
-(possible-moves '(0 0) 5)
+(get-edges '(2 2) 5)
+(get-edges '(0 0) 5)
 
 (solution board-size knight-position)
 (all board-size knight-position)
