@@ -25,16 +25,16 @@
 
 
 #|
-  Checks if the size of the board is real. It must be an exact and positive integer greater than 3
+  Checks if the size of the board is real. It must be an exact and positive integer greater than 4
   due to the fact that the movement of the knight needs at least 3 squares.
-  However, a 3X3 board could never meet the condition of going through all the squares on the board.
-  @param board-size exact-integer greater than 3
+  However, a 3X3 or 4X4 board could never meet the condition of going through all the squares on the board.
+  @param board-size exact-integer greater than 4
   @return boolean (true: the board size meets the conditions || false: the size doesn't meet the conditions) or raise-argument-error
 |#
 (define (valid-size? board-size)
   (cond
-    ((not (number? board-size)) (raise-argument-error 'valid-size? "exact-integer greater than 3" board-size))
-    (else (and (> board-size 3) (exact-integer? board-size)))
+    ((not (number? board-size)) (raise-argument-error 'valid-size? "exact-integer greater than 4" board-size))
+    (else (and (> board-size 4) (exact-integer? board-size)))
   )
 )
 
@@ -43,7 +43,7 @@
   Checks if the position is a list of two non-negative integers and if the position 
   exists on the board using the board size
   @param knight-position list with two non-negative integers (zero and positive) as initial position of the knight with the format '(column row)
-  @param board-size exact-integer greater than 3
+  @param board-size exact-integer greater than 4
   @return boolean (true: the position meets the conditions || false: the position doesn't meet the conditions) or raise-argument-error
 |#
 (define (valid-position? knight-position board-size)
@@ -179,10 +179,11 @@
 (define knight-position '(0 3))
 (define sol 
  '(
-    (01 12 07 00)
-    (06 09 04 13)
-    (15 02 11 08)
-    (10 05 14 03)
+    (01 06 15 10 21)
+    (14 09 20 05 16)
+    (19 02 07 22 11)
+    (08 13 24 17 04)
+    (25 18 03 12 23)
   )
 )
 
