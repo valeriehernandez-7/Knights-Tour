@@ -61,6 +61,13 @@
   )
 )
 
+(define (valid-solution? board-size solution)
+  (cond
+    ((or (null? board-size) (null? solution)) (error "valid-solution? arguments must be non-null"))
+    ((not (valid-size? board-size)) (raise-argument-error 'valid-solution? "board-size doesn't meet the requirements" board-size))
+    (else (equal? (length solution) (* board-size board-size)))
+  )
+)
 
 #|
   Checks if the Knight's tour is posible, using the 
@@ -96,6 +103,36 @@
   (cond
     ((equal? (length board) size) board)
     (else (create-board size (append board (list (create-row size)))))
+  )
+)
+
+(define (edit-position move position row (col 0) (row-updated '()))
+  (cond
+    ((equal? (second position) col) (list (append row-updated (list move) (cdr row))))
+    (else (edit-position move position (cdr row) (+ col 1) (append row-updated (list (car row)))))
+  )
+)
+
+(define (assign-move move position board (row 0) (board-updated '()))
+  (cond
+    ((equal? (first position) row) (append board-updated (edit-position move position (car board)) (cdr board)))
+    (else (assign-move move position (cdr board) (+ row 1) (append board-updated (list (car board)))))
+  )
+)
+
+(define (read-solution solution (board '()) (move 1))
+  (cond
+    ((null? solution) board)
+    (else (read-solution (cdr solution) (assign-move move (car solution) board) (+ move 1)))
+  )
+)
+
+(define (generate-board board-size solution)
+  (cond
+    ((or (null? board-size) (null? solution)) (error "generate-board arguments must be non-null"))
+    ((not (valid-size? board-size)) (raise-argument-error 'generate-board "board-size doesn't meet the requirements" board-size))
+    ((not (valid-solution? board-size solution)) (raise-argument-error 'generate-board "solution doesn't meet the requirements" solution))
+    (else (read-solution solution (create-board board-size)))
   )
 )
 
@@ -281,16 +318,19 @@
 
 (valid-size? board-size)
 (valid-position? knight-position board-size)
+(valid-solution? board-size sol)
 (tour? '(0 0) board-size)
 (tour? '(1 0) board-size)
 (size board)
+(size sol)
 (create-board board-size)
+(generate-board board-size sol)
 (print-board board)
 (check-position knight-position board)
 (available? knight-position board)
 (get-edges '(2 2) board-size)
 (get-edges '(0 0) board-size)
-
+(displayln "\n")
 (solution board-size knight-position)
 (solutions board-size knight-position)
 (test board-size sol)
