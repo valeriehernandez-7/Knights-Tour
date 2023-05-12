@@ -1,5 +1,7 @@
 #lang racket
 
+(provide gui-paint)
+
 #|
   Sebastián M. Chen Cerdas (https://github.com/seballoll)
   Valerie M. Hernández Fernández (https://github.com/valeriehernandez-7)
@@ -20,5 +22,6 @@
   2023
 |#
 
-
-(displayln "Knight's Tour 🐴")
+(define (gui-paint board-size solution)
+  (displayln "\nOpening the Knight's Tour 🐴 Visualizer...\n")
+)

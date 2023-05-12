@@ -1,5 +1,7 @@
 #lang racket
 
+(require "knight_gui.rkt")
+
 #|
   Sebastián M. Chen Cerdas (https://github.com/seballoll)
   Valerie M. Hernández Fernández (https://github.com/valeriehernandez-7)
@@ -21,7 +23,7 @@
 |#
 
 
-(displayln "Knight's Tour 🐴")
+(displayln "\nKnight's Tour 🐴\n")
 
 
 #|
@@ -33,7 +35,7 @@
 |#
 (define (valid-size? board-size)
   (cond
-    ((not (number? board-size)) (raise-argument-error 'valid-size? "exact-integer greater than 4" board-size))
+    ((not (number? board-size)) (raise-argument-error 'kt-valid-size? "exact-integer greater than 4" board-size))
     (else (and (> board-size 4) (exact-integer? board-size)))
   )
 )
@@ -49,13 +51,13 @@
 (define (valid-position? knight-position board-size)
   (cond
     ((or (null? knight-position) (not (list? knight-position)))
-      (raise-argument-error 'valid-position? "list" knight-position)
+      (raise-argument-error 'kt-valid-position? "list" knight-position)
     )
     ((not (equal? (length knight-position) 2))
-      (raise-argument-error 'valid-position? "two element list '(a b)" knight-position)
+      (raise-argument-error 'kt-valid-position? "two element list '(a b)" knight-position)
     )
     ((not (and (exact-nonnegative-integer? (first knight-position)) (exact-nonnegative-integer? (second knight-position))))
-      (raise-argument-error 'valid-position? "two exact-nonnegative-integer list '(0 0)" knight-position)
+      (raise-argument-error 'kt-valid-position? "two exact-nonnegative-integer list '(0 0)" knight-position)
     )
     (else (and (< (first knight-position) board-size) (< (second knight-position) board-size)))
   )
@@ -63,8 +65,8 @@
 
 (define (valid-solution? board-size solution)
   (cond
-    ((or (null? board-size) (null? solution)) (error "valid-solution? arguments must be non-null"))
-    ((not (valid-size? board-size)) (raise-argument-error 'valid-solution? "board-size doesn't meet the requirements" board-size))
+    ((or (null? board-size) (null? solution)) (error "kt-valid-solution? arguments must be non-null"))
+    ((not (valid-size? board-size)) (raise-argument-error 'kt-valid-solution? "board-size doesn't meet the requirements" board-size))
     (else (equal? (length solution) (* board-size board-size)))
   )
 )
@@ -87,7 +89,7 @@
 
 (define (size solution)
   (cond
-    ((or (null? solution) (not (list? solution))) (raise-argument-error 'size "list" solution))
+    ((or (null? solution) (not (list? solution))) (raise-argument-error 'kt-size "list" solution))
     (else (length solution))
   )
 )
@@ -129,9 +131,9 @@
 
 (define (generate-board board-size solution)
   (cond
-    ((or (null? board-size) (null? solution)) (error "generate-board arguments must be non-null"))
-    ((not (valid-size? board-size)) (raise-argument-error 'generate-board "board-size doesn't meet the requirements" board-size))
-    ((not (valid-solution? board-size solution)) (raise-argument-error 'generate-board "solution doesn't meet the requirements" solution))
+    ((or (null? board-size) (null? solution)) (error "kt-generate-board arguments must be non-null"))
+    ((not (valid-size? board-size)) (raise-argument-error 'kt-generate-board "board-size doesn't meet the requirements" board-size))
+    ((not (valid-solution? board-size solution)) (raise-argument-error 'kt-generate-board "solution doesn't meet the requirements" solution))
     (else (read-solution solution (create-board board-size)))
   )
 )
@@ -150,7 +152,7 @@
   (cond
     ((null? board) board)
     (else 
-      (display "(")
+      (display "  (")
       (print-col (car board))
       (displayln ")")
       (print-row (cdr board))
@@ -185,16 +187,16 @@
 
 (define (check-position position board)
   (cond
-    ((or (null? position) (null? board)) (error "check-position arguments must be non-null"))
+    ((or (null? position) (null? board)) (error "kt-check-position arguments must be non-null"))
     (else (check-row position board))
   )
 )
 
 (define (available? position board)
   (cond
-    ((or (null? position) (null? board)) (error "available? arguments must be non-null"))
-    ((not (valid-size? (size board))) (raise-argument-error 'available? "board size doesn't meet the requirements" board))
-    ((not (valid-position? position (size board))) (raise-argument-error 'available? "position doesn't meet the requirements" position))
+    ((or (null? position) (null? board)) (error "kt-available? arguments must be non-null"))
+    ((not (valid-size? (size board))) (raise-argument-error 'kt-available? "board size doesn't meet the requirements" board))
+    ((not (valid-position? position (size board))) (raise-argument-error 'kt-available? "position doesn't meet the requirements" position))
     (else (zero? (check-position position board)))
   )
 )
@@ -228,7 +230,7 @@
 |#
 (define (generate-edges row col)
   (cond
-    ((or (null? row) (null? col)) (error "generate-edges arguments must be non-null"))
+    ((or (null? row) (null? col)) (error "kt-generate-edges arguments must be non-null"))
     (else 
       (filter-edges
         (list
@@ -255,9 +257,9 @@
 |#
 (define (get-edges position board-size)
   (cond
-    ((or (null? position) (null? board-size)) (error "get-edges arguments must be non-null"))
-    ((not (valid-size? board-size)) (raise-argument-error 'get-edges "board-size doesn't meet the requirements" board-size))
-    ((not (valid-position? position board-size)) (raise-argument-error 'get-edges "position doesn't meet the requirements" position))
+    ((or (null? position) (null? board-size)) (error "kt-get-edges arguments must be non-null"))
+    ((not (valid-size? board-size)) (raise-argument-error 'kt-get-edges "board-size doesn't meet the requirements" board-size))
+    ((not (valid-position? position board-size)) (raise-argument-error 'kt-get-edges "position doesn't meet the requirements" position))
     (else (generate-edges (first position) (second position)))
   )
 )
@@ -266,19 +268,31 @@
 ; MAIN FUNCTIONS ------------------------------------------------------------------------------------------------------------------
 
 (define (solution board-size knight-position)
-  (display "PDC-Solution")(display "\t board-size ")(display board-size)(display "\t knight-position ")(displayln knight-position)
+  (displayln "\n>>> KT-Solution 💡 <<<")(display "'board-size'\t\t: ")(displayln board-size)(display "'knight-position'\t: ")(displayln knight-position)(display "\n")
 )
 
 (define (solutions board-size knight-position)
-  (display "PDC-Solutions")(display "\t board-size ")(display board-size)(display "\t knight-position ")(displayln knight-position)
+  (displayln "\n>>> KT-Solutions 📦 <<<")(display "'board-size'\t\t: ")(displayln board-size)(display "'knight-position'\t: ")(displayln knight-position)(display "\n")
 )
 
 (define (test board-size solution)
-  (display "PDC-Test")(display "\t board-size ")(display board-size)(display "\t solution ")(displayln solution)
+  (displayln "\n>>> KT-Test ✅ <<<")(display "'board-size'\t: ")(displayln board-size)(display "'solution'\t: ")(displayln solution)(display "\n")
+  (cond 
+    ((or (null? board-size) (null? solution)) (error "kt-test arguments must be non-null"))
+    ((not (valid-size? board-size)) (raise-argument-error 'kt-test "board-size doesn't meet the requirements" board-size))
+    ((not (valid-solution? board-size solution)) (raise-argument-error 'kt-test "solution doesn't meet the requirements" solution))
+    (else (print-board (generate-board board-size solution)))
+  )
 )
 
 (define (paint board-size solution)
-  (display "PDC-Paint")(display "\t board-size ")(display board-size)(display "\t solution ")(displayln solution)
+  (displayln "\n>>> KT-Paint 🎨 <<<")(display "'board-size'\t: ")(displayln board-size)(display "'solution'\t: ")(displayln solution)
+  (cond
+    ((or (null? board-size) (null? solution)) (error "kt-paint arguments must be non-null"))
+    ((not (valid-size? board-size)) (raise-argument-error 'kt-paint "board-size doesn't meet the requirements" board-size))
+    ((not (valid-solution? board-size solution)) (raise-argument-error 'kt-paint "solution doesn't meet the requirements" solution))
+    (else (gui-paint board-size solution))
+  )
 )
 
 
@@ -316,21 +330,21 @@
   )
 )
 
-(valid-size? board-size)
-(valid-position? knight-position board-size)
-(valid-solution? board-size sol)
-(tour? '(0 0) board-size)
-(tour? '(1 0) board-size)
-(size board)
-(size sol)
-(create-board board-size)
-(generate-board board-size sol)
-(print-board board)
-(check-position knight-position board)
-(available? knight-position board)
-(get-edges '(2 2) board-size)
-(get-edges '(0 0) board-size)
-(displayln "\n")
+; (valid-size? board-size)
+; (valid-position? knight-position board-size)
+; (valid-solution? board-size sol)
+; (tour? '(0 0) board-size)
+; (tour? '(1 0) board-size)
+; (size board)
+; (size sol)
+; (create-board board-size)
+; (generate-board board-size sol)
+; (print-board board)
+; (check-position knight-position board)
+; (available? knight-position board)
+; (get-edges '(2 2) board-size)
+; (get-edges '(0 0) board-size)
+
 (solution board-size knight-position)
 (solutions board-size knight-position)
 (test board-size sol)
