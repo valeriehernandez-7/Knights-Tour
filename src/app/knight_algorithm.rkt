@@ -85,17 +85,17 @@
   )
 )
 
-(define (generate-row size (row '()))
+(define (create-row size (row '()))
   (cond
     ((equal? (length row) size) row)
-    (else (generate-row size (generate-row size (append row (list 0)))))
+    (else (create-row size (create-row size (append row (list 0)))))
   )
 )
 
-(define (generate-board size (board '()))
+(define (create-board size (board '()))
   (cond
     ((equal? (length board) size) board)
-    (else (generate-board size (append board (list (generate-row size)))))
+    (else (create-board size (append board (list (create-row size)))))
   )
 )
 
@@ -232,8 +232,8 @@
   (display "PDC-Solution")(display "\t board-size ")(display board-size)(display "\t knight-position ")(displayln knight-position)
 )
 
-(define (all board-size knight-position)
-  (display "PDC-All")(display "\t board-size ")(display board-size)(display "\t knight-position ")(displayln knight-position)
+(define (solutions board-size knight-position)
+  (display "PDC-Solutions")(display "\t board-size ")(display board-size)(display "\t knight-position ")(displayln knight-position)
 )
 
 (define (test board-size solution)
@@ -256,8 +256,8 @@
   4  (25 18 03 12 23)
 |#
 
-(define board-size 4)
-(define knight-position '(0 3))
+(define board-size 5)
+(define knight-position '(2 2))
 
 (define board 
  '(
@@ -274,24 +274,24 @@
     (0 0) (2 1) (4 2) (3 4) (1 3) ; 01 - 05
     (0 1) (2 2) (3 0) (1 1) (0 3) ; 06 - 10
     (2 4) (4 3) (3 1) (1 0) (0 2) ; 11 - 15
-    ( ) ( ) ( ) ( ) ( ) ; 16 - 20
-    ( ) ( ) ( ) ( ) ( ) ; 21 - 25
+    (1 4) (3 3) (4 1) (2 0) (1 2) ; 16 - 20
+    (0 4) (2 3) (4 4) (3 2) (4 0) ; 21 - 25
   )
 )
 
 (valid-size? board-size)
 (valid-position? knight-position board-size)
-(tour? '(0 0) 5)
-(tour? '(1 0) 5)
+(tour? '(0 0) board-size)
+(tour? '(1 0) board-size)
 (size board)
-(generate-board board-size)
+(create-board board-size)
 (print-board board)
 (check-position knight-position board)
 (available? knight-position board)
-(get-edges '(2 2) 5)
-(get-edges '(0 0) 5)
+(get-edges '(2 2) board-size)
+(get-edges '(0 0) board-size)
 
 (solution board-size knight-position)
-(all board-size knight-position)
-(test board-size board)
-(paint board-size board)
+(solutions board-size knight-position)
+(test board-size sol)
+(paint board-size sol)
