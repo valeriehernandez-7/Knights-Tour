@@ -291,7 +291,7 @@
     ((or (null? board-size) (null? solution)) (error "kt-paint arguments must be non-null"))
     ((not (valid-size? board-size)) (raise-argument-error 'kt-paint "board-size doesn't meet the requirements" board-size))
     ((not (valid-solution? board-size solution)) (raise-argument-error 'kt-paint "solution doesn't meet the requirements" solution))
-    (else (gui-paint board-size solution))
+    (else (visualizer board-size solution (generate-board board-size solution)))
   )
 )
 

@@ -1,6 +1,6 @@
 #lang racket
 
-(provide gui-paint)
+(provide visualizer)
 
 #|
   Sebastián M. Chen Cerdas (https://github.com/seballoll)
@@ -22,6 +22,10 @@
   2023
 |#
 
-(define (gui-paint board-size solution)
-  (displayln "\nOpening the Knight's Tour 🐴 Visualizer...\n")
+(define (visualizer board-size solution board)
+  (displayln "\nOpening the Knight's Tour 🐴 Visualizer...")
+  (displayln "\n>>> KT-Visualizer 💻 <<<")
+  (display "'board-size'\t: ")(displayln board-size)
+  (display "'solution'\t: ")(displayln solution)
+  (display "'board'\t\t: ")(displayln board)(display "\n")
 )
