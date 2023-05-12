@@ -87,6 +87,12 @@
   )
 )
 
+
+#|
+  This function returns the size of a given board or solution.
+  @param a list that contains the movements of a solution or a board.
+  @returns the size of the solution or board as an integer.
+|#
 (define (size solution)
   (cond
     ((or (null? solution) (not (list? solution))) (raise-argument-error 'kt-size "list" solution))
@@ -94,6 +100,11 @@
   )
 )
 
+#|
+  Creates a row for the nxn board and fill the spaces with a 0.
+  @param size of the row as an integer.
+  @return list with the created row.
+|#
 (define (create-row size (row '()))
   (cond
     ((equal? (length row) size) row)
@@ -101,6 +112,11 @@
   )
 )
 
+#|
+  Creates a nxn board for the Knight's Tour made by n amount of rows.
+  @param size of the board as an integer.
+  @returns the nxn board as a matrix.
+|#
 (define (create-board size (board '()))
   (cond
     ((equal? (length board) size) board)
@@ -108,6 +124,13 @@
   )
 )
 
+#|
+  This function changes a value inside the row for the movement number of the knight.
+  @param move as the movement number of the knight.
+  @param position as a list made of a pair of numbers (row column)
+  @param row as a list for the movement to be added.
+  @returns a list that contains the new row with the knight's movement number.
+|#
 (define (edit-position move position row (col 0) (row-updated '()))
   (cond
     ((equal? (second position) col) (list (append row-updated (list move) (cdr row))))
@@ -115,6 +138,14 @@
   )
 )
 
+#|
+  This function receives a movement of the knight then goes to the right row of the board
+  to change the the value.
+  @param move as the movement number of the knight
+  @param position as a list made of a pair of numbers (row column)
+  @param board as list of rows
+  @return list with the board wich a move was added
+|#
 (define (assign-move move position board (row 0) (board-updated '()))
   (cond
     ((equal? (first position) row) (append board-updated (edit-position move position (car board)) (cdr board)))
@@ -122,6 +153,12 @@
   )
 )
 
+#|
+  Function that reads a Knight's tour solution and makes a matrix of the knight's movements.
+  @param solution as a list made of a pair of numbers (row column)
+  @param board as a list to be modified
+  @return list with a board that has the solution as numbers.
+|#
 (define (read-solution solution (board '()) (move 1))
   (cond
     ((null? solution) board)
@@ -129,6 +166,12 @@
   )
 )
 
+#|
+  Function that generates a n sized board with the movements of the knight based on a given solution only if the requirements are met.
+  @param board-size as an integer.
+  @param solution as a list made of a pair of numbers (row column)
+  @return list with a board that has the solution movements as numbers.
+|#
 (define (generate-board board-size solution)
   (cond
     ((or (null? board-size) (null? solution)) (error "kt-generate-board arguments must be non-null"))
@@ -138,6 +181,11 @@
   )
 )
 
+#|
+  Changes all the values inside a row into strings with a format and prints them on the terminal.
+  @param row as a list of numbers.
+  @returns the row as a text value with a format.
+|#
 (define (print-col row)
   (cond
     ((null? row) row)
@@ -148,6 +196,11 @@
   )
 )
 
+#|
+  Turns the values of the rows inside a board into a string with a format and prints them on the terminal.
+  @param board as a list of rows with numbers.
+  @return a board as a list of rows with strings.
+|#
 (define (print-row board)
   (cond
     ((null? board) board)
@@ -159,7 +212,11 @@
     )
   )
 )
-
+#|
+  This function prints the board with the knight's movements on the terminal 
+  @param board as a list of rows with the knight's movements.
+  @return board on the terminal.
+|#
 (define (print-board (board '()))
   (cond
     ((null? board) board)
@@ -171,6 +228,12 @@
   )
 )
 
+#|
+  This function returns a number that is on the position to check
+  @param position as a list made of a pair of numbers (row column)
+  @param row as a list of numbers.
+  @return integer of the position checked.
+|#
 (define (check-col position row (col 0))
   (cond
     ((equal? (second position) col) (car row))
@@ -178,6 +241,12 @@
   )
 )
 
+#|
+  This function goes to the right row to check the position.
+  @param position as a list made of a pair of numbers (row column)
+  @param board as list of rows.
+  @return results of the check-col function applied on the row.
+|#
 (define (check-row position board (row 0))
   (cond
     ((equal? (first position) row) (check-col position (car board)))
@@ -185,6 +254,12 @@
   )
 )
 
+#|
+  This function checks if the values of position and board are valid.
+  @param position as a list made of a pair of numbers (row column)
+  @param board as list of rows.
+  @return results of the check-row function applied on the board.
+|#
 (define (check-position position board)
   (cond
     ((or (null? position) (null? board)) (error "kt-check-position arguments must be non-null"))
@@ -192,6 +267,13 @@
   )
 )
 
+#|
+  This function checks if a position on the board is available for a movement,
+  for a position to be available the value has to be 0.
+  @param position as alist made of a pair of numbers (row column)
+  @param board as list of rows.
+  @return Boolean (true: if the position for the next movement is available on the board | false: if the position is not available)
+|#
 (define (available? position board)
   (cond
     ((or (null? position) (null? board)) (error "kt-available? arguments must be non-null"))
