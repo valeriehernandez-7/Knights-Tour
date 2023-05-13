@@ -318,6 +318,68 @@
 
 
 #|
+  Walk through the graph looking for the node's edges and returns them.
+  @param node list with two non-negative integers (zero and positive) as board position with the format '(row column) 
+  @param graph as graph matrix form 
+  @return pair list as the edges of the node
+|#
+(define (edges node graph)
+  (cond
+    ((equal? node (first (car graph))) (second (car graph)))
+    (else (edges node (cdr graph)))
+  )
+)
+
+
+#|
+  Filters the edges returning only the available edges.
+  @param edges pair list as edges
+  @param board integer matrix
+  @param available empty list
+  @return list with the available edges
+|#
+(define (available-edges edges board (available '()))
+  (cond
+    ((null? edges) available)
+    (else 
+      (cond
+        ((available? (car edges) board) (available-edges (cdr edges) board (append available (list (car edges)))))
+        (else (available-edges (cdr edges) board available))
+      )
+    )
+  )
+)
+
+
+#|
+  Goes through the edges looking for the chosen node and returns it.
+  @param node random integer as the edge selected to be the next node
+  @param edges pair list as edges
+  @param edge integer as edge index
+  @return pair as the node selected
+|#
+(define (select-node node edges (edge 0))
+  (cond
+    ((equal? node edge) (car edges))
+    (else (select-node node (cdr edges) (+ edge 1)))
+  )
+)
+
+
+#|
+  Selects a node-index from the available edge list and returns it.
+  @param available-edges pair list as edges of the current node
+  @return pair as the node selected
+|#
+(define (next-node available-edges)
+  (cond
+    ((null? available-edges) '())
+    (else (select-node (random (length available-edges)) available-edges))
+  )
+)
+
+
+#|
   Filters the possible positions list and removes off-board positions.
   An off-board position has either a negative row or column or row or col equal or greater to the board size.
   @param edges list of all L-pattern positions
@@ -523,6 +585,19 @@
   )
 )
 
+(define available-positions 
+  (available-edges 
+    (edges '(2 2) graph)
+    '(
+      (01 00 15 10 21)
+      (14 09 20 05 00)
+      (19 02 07 22 11)
+      (08 13 24 17 04)
+      (25 18 03 00 23)
+    )
+  )
+)
+
 ; (valid-size? board-size)
 ; (valid-position? knight-position board-size)
 ; (valid-solution? board-size sol)
@@ -535,6 +610,7 @@
 ; (print-board board)
 ; (check-position knight-position board)
 ; (available? knight-position board)
+; (next-node available-positions)
 ; (get-edges '(2 2) board-size)
 ; (get-edges '(0 0) board-size)
 ; (create-graph 5)
