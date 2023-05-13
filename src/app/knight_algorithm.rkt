@@ -389,16 +389,35 @@
 
 
 #|
-
+  Creates a square matrix as the graph ((n_1 (e_1 e_n)) (n_n (e_1 e_n))) structure.
+  The graph's nodes are all of the square board positions [first-position : (0 0), last-position : (n n)].
+  The graph's node edges are all of the L-pattern on-board positions with the node position as the initial position.
+  @param board-size exact-integer greater than 4
+  @param node position list with two non-negative integers (zero and positive) as first board position with the format '(row column)
+  @param graph empty list
+  @return matrix as graph matrix form
 |#
 (define (create-graph board-size (node '(0 0)) (graph '()))
   (cond
-    ((= (first node) (second node) board-size) graph)
+    ((= (first node) (second node) (- board-size 1)) 
+      (append graph (list (cons node (list (get-edges node board-size)))))
+    )
     (else
-      (create-graph
-        board-size
-        (list (+ (first node) 1) (+ (second node) 1))
-        (append graph (list (cons node (list (get-edges node board-size)))))
+      (cond
+        ((< (second node) (- board-size 1))
+          (create-graph
+            board-size
+            (list (first node) (+ (second node) 1))
+            (append graph (list (cons node (list (get-edges node board-size)))))
+          )
+        )
+        (else
+          (create-graph
+            board-size
+            (list (+ (first node) 1) 0)
+            (append graph (list (cons node (list (get-edges node board-size)))))
+          )
+        )
       )
     )
   )
@@ -470,6 +489,40 @@
   )
 )
 
+(define graph 
+  '(
+    ((0 0) ((1 2) (2 1))) 
+    ((0 1) ((1 3) (2 0) (2 2))) 
+    ((0 2) ((1 0) (1 4) (2 1) (2 3))) 
+    ((0 3) ((1 1) (2 2) (2 4))) 
+    ((0 4) ((1 2) (2 3))) 
+
+    ((1 0) ((0 2) (2 2) (3 1))) 
+    ((1 1) ((0 3) (2 3) (3 0) (3 2))) 
+    ((1 2) ((0 0) (0 4) (2 0) (2 4) (3 1) (3 3))) 
+    ((1 3) ((0 1) (2 1) (3 2) (3 4))) 
+    ((1 4) ((0 2) (2 2) (3 3))) 
+
+    ((2 0) ((0 1) (1 2) (3 2) (4 1))) 
+    ((2 1) ((0 0) (0 2) (1 3) (3 3) (4 0) (4 2))) 
+    ((2 2) ((0 1) (0 3) (1 0) (1 4) (3 0) (3 4) (4 1) (4 3))) 
+    ((2 3) ((0 2) (0 4) (1 1) (3 1) (4 2) (4 4))) 
+    ((2 4) ((0 3) (1 2) (3 2) (4 3))) 
+
+    ((3 0) ((1 1) (2 2) (4 2))) 
+    ((3 1) ((1 0) (1 2) (2 3) (4 3))) 
+    ((3 2) ((1 1) (1 3) (2 0) (2 4) (4 0) (4 4))) 
+    ((3 3) ((1 2) (1 4) (2 1) (4 1))) 
+    ((3 4) ((1 3) (2 2) (4 2))) 
+
+    ((4 0) ((2 1) (3 2))) 
+    ((4 1) ((2 0) (2 2) (3 3))) 
+    ((4 2) ((2 1) (2 3) (3 0) (3 4))) 
+    ((4 3) ((2 2) (2 4) (3 1))) 
+    ((4 4) ((2 3) (3 2))) 
+  )
+)
+
 ; (valid-size? board-size)
 ; (valid-position? knight-position board-size)
 ; (valid-solution? board-size sol)
@@ -484,7 +537,7 @@
 ; (available? knight-position board)
 ; (get-edges '(2 2) board-size)
 ; (get-edges '(0 0) board-size)
-(create-graph 5)
+; (create-graph 5)
 
 ; (solution board-size knight-position)
 ; (solutions board-size knight-position)
