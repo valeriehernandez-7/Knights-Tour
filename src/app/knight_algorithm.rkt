@@ -67,14 +67,25 @@
   must have (size * size) elements, this means all the board positions are visited.
   @param board-size exact-integer greater than 4
   @param solution pair (row column) list as the solution structure
-  @return 
+  @return boolean (true: the solution meets the conditions || false: the solution doesn't meet the conditions) or raise-argument-error
 |#
 (define (valid-solution? board-size solution)
   (cond
     ((or (null? board-size) (null? solution)) (error "kt-valid-solution? arguments must be non-null"))
     ((not (valid-size? board-size)) (raise-argument-error 'kt-valid-solution? "board-size doesn't meet the requirements" board-size))
-    (else (equal? (length solution) (* board-size board-size)))
+    (else (equal? (length solution) (expt board-size 2)))
   )
+)
+
+
+#|
+  Checks if the move int is in range of board size.
+  @param move positive exact-integer as solution's move (n)
+  @param board matrix as the square board
+  @return boolean (true: the move meets the conditions || false: the move doesn't meet the conditions)
+|#
+(define (valid-move? move board)
+  (and (> move 0) (<= move (expt (size board) 2)))
 )
 
 
@@ -98,7 +109,7 @@
 #|
   Returns the array length.
   @param array list data type
-  @returns positive integer as the number of array elements 
+  @return positive integer as the number of array elements 
 |#
 (define (size array)
   (cond
@@ -127,7 +138,7 @@
   Uses the create-row as aux to parse the matrix to create the rows and append them.
   @param size exact-integer greater than 4
   @param board empty list
-  @returns matrix as the Knight's Tour board
+  @return matrix as the Knight's Tour board
 |#
 (define (create-board size (board '()))
   (cond
@@ -140,11 +151,11 @@
 #|
   Replaces the row element (0) with the solution's move (n).
   @param move positive exact-integer as solution's move (n)
-  @param position position list with two non-negative integers (zero and positive) as solution move position with the format '(row column)
+  @param position list with two non-negative integers (zero and positive) as solution move position with the format '(row column)
   @param row as a list for the movement to be added
   @param col integer as col index
   @param row-updated empty list
-  @returns list as the board row updated
+  @return list as the board row updated
 |#
 (define (edit-position move position row (col 0) (row-updated '()))
   (cond
@@ -158,7 +169,7 @@
   Uses the solution's move number and updates the row using the given position 
   through aux function edit-position.
   @param move positive exact-integer as solution's move (n)
-  @param position position list with two non-negative integers (zero and positive) as solution move position with the format '(row column)
+  @param position list with two non-negative integers (zero and positive) as solution move position with the format '(row column)
   @param board matrix as the square board
   @param row integer as row index
   @param board-updated empty list
@@ -184,6 +195,8 @@
 (define (read-solution solution (board '()) (move 1))
   (cond
     ((null? solution) board)
+    ((not (valid-move? move board)) (raise-argument-error 'kt-read-solution "move doesn't meet the requirements" move))
+    ((not (valid-position? (car solution) (size board))) (raise-argument-error 'kt-read-solution "position doesn't meet the requirements" (car solution)))
     (else (read-solution (cdr solution) (assign-move move (car solution) board) (+ move 1)))
   )
 )
@@ -207,9 +220,26 @@
 
 
 #|
+  Retrieves the Knight´s Tour board looking for the position and assigns the move to the position.
+  @param move positive exact-integer as solution's move (n)
+  @param position list with two non-negative integers (zero and positive) as solution move position with the format '(row column)
+  @param board matrix to display the solution matrix form
+  @return matrix as the solution matrix form
+|#
+(define (update-board move position board)
+  (cond 
+    ((or (null? move) (null? position) (null? board)) (error "kt-update-board arguments must be non-null"))
+    ((not (valid-move? move board)) (raise-argument-error 'kt-update-board "move doesn't meet the requirements" move))
+    ((not (valid-position? position (size board))) (raise-argument-error 'kt-update-board "position doesn't meet the requirements" position))
+    (else (assign-move move position board))
+  )
+)
+
+
+#|
   Displays in terminal the row elements with the "##" string format.
   @param row integer list as board row
-  @returns the row as a text value with a format.
+  @return the row string format
 |#
 (define (print-col row)
   (cond
@@ -607,6 +637,7 @@
 ; (size sol)
 ; (create-board board-size)
 ; (generate-board board-size sol)
+; (update-board 23 '(2 2) (create-board 5))
 ; (print-board board)
 ; (check-position knight-position board)
 ; (available? knight-position board)
