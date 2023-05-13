@@ -318,18 +318,25 @@
 
 
 #|
-  Filters the possible positions list and removes off-board positions. An off-board position has a negative row or column.
+  Filters the possible positions list and removes off-board positions.
+  An off-board position has either a negative row or column or row or col equal or greater to the board size.
   @param edges list of all L-pattern positions
+  @param board-size exact-integer greater than 4
   @param clean list without off-board positions
   @return pair list with possible L-pattern positions without off-board positions
 |#
-(define (filter-edges edges (clean '()))
+(define (filter-edges edges board-size (clean '()))
   (cond
     ((null? edges) clean)
     (else 
       (cond
-        ((or (negative? (first (car edges))) (negative? (second (car edges)))) (filter-edges (cdr edges) clean))
-        (else (filter-edges (cdr edges) (append clean (list (car edges)))))
+        ((or (negative? (first (car edges))) (negative? (second (car edges)))) 
+          (filter-edges (cdr edges) board-size clean)
+        )
+        ((or (>= (first (car edges)) board-size) (>= (second (car edges)) board-size))
+          (filter-edges (cdr edges) board-size clean)
+        )
+        (else (filter-edges (cdr edges) board-size (append clean (list (car edges)))))
       )
     )
   )
@@ -340,9 +347,10 @@
   Retrieves all possible positions by applying the knight movement rule (L-pattern) to the received row's position and col's position.
   @param row non-negative integer [0, board-size] as row index
   @param col non-negative integer [0, board-size] as col index
+  @param board-size exact-integer greater than 4
   @return pair list with all (8) L-pattern positions
 |#
-(define (generate-edges row col)
+(define (generate-edges row col board-size)
   (cond
     ((or (null? row) (null? col)) (error "kt-generate-edges arguments must be non-null"))
     (else 
@@ -357,6 +365,7 @@
           (list (+ row 2) (- col 1)) ; 2⬇ 1⬅
           (list (+ row 2) (+ col 1)) ; 2⬇ 1➡
         )
+        board-size
       )
     )
   )
@@ -374,7 +383,24 @@
     ((or (null? position) (null? board-size)) (error "kt-get-edges arguments must be non-null"))
     ((not (valid-size? board-size)) (raise-argument-error 'kt-get-edges "board-size doesn't meet the requirements" board-size))
     ((not (valid-position? position board-size)) (raise-argument-error 'kt-get-edges "position doesn't meet the requirements" position))
-    (else (generate-edges (first position) (second position)))
+    (else (generate-edges (first position) (second position) board-size))
+  )
+)
+
+
+#|
+
+|#
+(define (create-graph board-size (node '(0 0)) (graph '()))
+  (cond
+    ((= (first node) (second node) board-size) graph)
+    (else
+      (create-graph
+        board-size
+        (list (+ (first node) 1) (+ (second node) 1))
+        (append graph (list (cons node (list (get-edges node board-size)))))
+      )
+    )
   )
 )
 
@@ -458,8 +484,9 @@
 ; (available? knight-position board)
 ; (get-edges '(2 2) board-size)
 ; (get-edges '(0 0) board-size)
+(create-graph 5)
 
-(solution board-size knight-position)
-(solutions board-size knight-position)
-(test board-size sol)
-(paint board-size sol)
+; (solution board-size knight-position)
+; (solutions board-size knight-position)
+; (test board-size sol)
+; (paint board-size sol)
