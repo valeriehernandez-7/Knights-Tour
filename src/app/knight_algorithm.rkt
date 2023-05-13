@@ -42,8 +42,7 @@
 
 
 #|
-  Checks if the position is a list of two non-negative integers and if the position 
-  exists on the board using the board size
+  Checks if the position is a list of two non-negative integers and if the position exists on the board using the board size
   @param knight-position list with two non-negative integers (zero and positive) as initial position of the knight with the format '(row column)
   @param board-size exact-integer greater than 4
   @return boolean (true: the position meets the conditions || false: the position doesn't meet the conditions) or raise-argument-error
@@ -63,6 +62,13 @@
   )
 )
 
+#|
+  Checks if the solution is a square board complete tour. To be a complete tour the provided solution
+  must have (size * size) elements, this means all the board positions are visited.
+  @param board-size exact-integer greater than 4
+  @param solution pair (row column) list as the solution structure
+  @return 
+|#
 (define (valid-solution? board-size solution)
   (cond
     ((or (null? board-size) (null? solution)) (error "kt-valid-solution? arguments must be non-null"))
@@ -70,6 +76,7 @@
     (else (equal? (length solution) (* board-size board-size)))
   )
 )
+
 
 #|
   Checks if the Knight's tour is posible, using the 
@@ -89,21 +96,23 @@
 
 
 #|
-  This function returns the size of a given board or solution.
-  @param a list that contains the movements of a solution or a board.
-  @returns the size of the solution or board as an integer.
+  Returns the array length.
+  @param array list data type
+  @returns positive integer as the number of array elements 
 |#
-(define (size solution)
+(define (size array)
   (cond
-    ((or (null? solution) (not (list? solution))) (raise-argument-error 'kt-size "list" solution))
-    (else (length solution))
+    ((or (null? array) (not (list? array))) (raise-argument-error 'kt-size "list" array))
+    (else (length array))
   )
 )
 
+
 #|
-  Creates a row for the nxn board and fill the spaces with a 0.
-  @param size of the row as an integer.
-  @return list with the created row.
+  Creates a list of 0 as new row to create the square board.
+  @param size exact-integer greater than 4
+  @param row empty list
+  @return list as row
 |#
 (define (create-row size (row '()))
   (cond
@@ -112,10 +121,13 @@
   )
 )
 
+
 #|
-  Creates a nxn board for the Knight's Tour made by n amount of rows.
-  @param size of the board as an integer.
-  @returns the nxn board as a matrix.
+  Creates a matrix structure as the square board of specific size for the Knight's Tour.
+  Uses the create-row as aux to parse the matrix to create the rows and append them.
+  @param size exact-integer greater than 4
+  @param board empty list
+  @returns matrix as the Knight's Tour board
 |#
 (define (create-board size (board '()))
   (cond
@@ -124,12 +136,15 @@
   )
 )
 
+
 #|
-  This function changes a value inside the row for the movement number of the knight.
-  @param move as the movement number of the knight.
-  @param position as a list made of a pair of numbers (row column)
-  @param row as a list for the movement to be added.
-  @returns a list that contains the new row with the knight's movement number.
+  Replaces the row element (0) with the solution's move (n).
+  @param move positive exact-integer as solution's move (n)
+  @param position position list with two non-negative integers (zero and positive) as solution move position with the format '(row column)
+  @param row as a list for the movement to be added
+  @param col integer as col index
+  @param row-updated empty list
+  @returns list as the board row updated
 |#
 (define (edit-position move position row (col 0) (row-updated '()))
   (cond
@@ -138,13 +153,16 @@
   )
 )
 
+
 #|
-  This function receives a movement of the knight then goes to the right row of the board
-  to change the the value.
-  @param move as the movement number of the knight
-  @param position as a list made of a pair of numbers (row column)
-  @param board as list of rows
-  @return list with the board wich a move was added
+  Uses the solution's move number and updates the row using the given position 
+  through aux function edit-position.
+  @param move positive exact-integer as solution's move (n)
+  @param position position list with two non-negative integers (zero and positive) as solution move position with the format '(row column)
+  @param board matrix as the square board
+  @param row integer as row index
+  @param board-updated empty list
+  @return matrix as the solution matrix form
 |#
 (define (assign-move move position board (row 0) (board-updated '()))
   (cond
@@ -153,11 +171,15 @@
   )
 )
 
+
 #|
-  Function that reads a Knight's tour solution and makes a matrix of the knight's movements.
-  @param solution as a list made of a pair of numbers (row column)
-  @param board as a list to be modified
-  @return list with a board that has the solution as numbers.
+  Retrieves the Knight´s Tour solution and updates a matrix with the solution's move number.
+  Assumes that the solution is presented with the pairs in the order that the Knight visits the position, 
+  with the first pair being the initial position and the last pair being the final position.
+  @param solution pair (row column) list as the solution structure
+  @param board matrix to display the solution matrix form
+  @param move positive exact-integer as solution's move (n)
+  @return matrix as the solution matrix form
 |#
 (define (read-solution solution (board '()) (move 1))
   (cond
@@ -166,11 +188,13 @@
   )
 )
 
+
 #|
-  Function that generates a n sized board with the movements of the knight based on a given solution only if the requirements are met.
-  @param board-size as an integer.
-  @param solution as a list made of a pair of numbers (row column)
-  @return list with a board that has the solution movements as numbers.
+  Generates a matrix as the square board of specific 
+  size with the given solution only if the requirements are met.
+  @param board-size exact-integer greater than 4
+  @param solution pair (row column) list as the solution structure
+  @return matrix as the solution matrix form
 |#
 (define (generate-board board-size solution)
   (cond
@@ -181,9 +205,10 @@
   )
 )
 
+
 #|
-  Changes all the values inside a row into strings with a format and prints them on the terminal.
-  @param row as a list of numbers.
+  Displays in terminal the row elements with the "##" string format.
+  @param row integer list as board row
   @returns the row as a text value with a format.
 |#
 (define (print-col row)
@@ -196,10 +221,11 @@
   )
 )
 
+
 #|
-  Turns the values of the rows inside a board into a string with a format and prints them on the terminal.
-  @param board as a list of rows with numbers.
-  @return a board as a list of rows with strings.
+  Displays in terminal the board rows using string format.
+  @param board integer matrix
+  @return matrix as the Knigh's Tour board
 |#
 (define (print-row board)
   (cond
@@ -212,10 +238,12 @@
     )
   )
 )
+
+
 #|
-  This function prints the board with the knight's movements on the terminal 
-  @param board as a list of rows with the knight's movements.
-  @return board on the terminal.
+  Displays in terminal the board using print-row and print-col as aux functions.
+  @param board integer matrix
+  @return matrix string format as the Knigh's Tour board
 |#
 (define (print-board (board '()))
   (cond
@@ -228,11 +256,13 @@
   )
 )
 
+
 #|
-  This function returns a number that is on the position to check
-  @param position as a list made of a pair of numbers (row column)
-  @param row as a list of numbers.
-  @return integer of the position checked.
+  Returns the position value.
+  @param position list with two non-negative integers (zero and positive) as board position with the format '(row column)
+  @param row integer list
+  @param col integer as col index
+  @return integer as position value
 |#
 (define (check-col position row (col 0))
   (cond
@@ -241,11 +271,13 @@
   )
 )
 
+
 #|
-  This function goes to the right row to check the position.
-  @param position as a list made of a pair of numbers (row column)
-  @param board as list of rows.
-  @return results of the check-col function applied on the row.
+  Retrieves the board looking for the position using check-col as aux function.
+  @param position list with two non-negative integers (zero and positive) as board position with the format '(row column)
+  @param board integer matrix
+  @param row integer as row index
+  @return integer as position value
 |#
 (define (check-row position board (row 0))
   (cond
@@ -254,11 +286,12 @@
   )
 )
 
+
 #|
-  This function checks if the values of position and board are valid.
-  @param position as a list made of a pair of numbers (row column)
-  @param board as list of rows.
-  @return results of the check-row function applied on the board.
+  Retrieves the board looking for the position value and returns it.
+  @param position list with two non-negative integers (zero and positive) as board position with the format '(row column)
+  @param board integer matrix
+  @return integer as board position value
 |#
 (define (check-position position board)
   (cond
@@ -267,12 +300,12 @@
   )
 )
 
+
 #|
-  This function checks if a position on the board is available for a movement,
-  for a position to be available the value has to be 0.
-  @param position as alist made of a pair of numbers (row column)
-  @param board as list of rows.
-  @return Boolean (true: if the position for the next movement is available on the board | false: if the position is not available)
+  Checks if a board position is available for a solution's move. Available position has 0 as value.
+  @param position list with two non-negative integers (zero and positive) as board position with the format '(row column)
+  @param board integer matrix
+  @return boolean (true: if the board position for the next solution's move is available | false: if the board position is not available)
 |#
 (define (available? position board)
   (cond
@@ -285,11 +318,10 @@
 
 
 #|
-  Filters the possible positions list and removes off-board positions.
-  An off-board position has a negative row or column.
+  Filters the possible positions list and removes off-board positions. An off-board position has a negative row or column.
   @param edges list of all L-pattern positions
   @param clean list without off-board positions
-  @return list of possible L-pattern positions without off-board positions
+  @return pair list with possible L-pattern positions without off-board positions
 |#
 (define (filter-edges edges (clean '()))
   (cond
@@ -306,9 +338,9 @@
 
 #|
   Retrieves all possible positions by applying the knight movement rule (L-pattern) to the received row's position and col's position.
-  @param row non-negative integer [0, board-size]
-  @param col non-negative integer [0, board-size]
-  @return list of all (8) L-pattern positions
+  @param row non-negative integer [0, board-size] as row index
+  @param col non-negative integer [0, board-size] as col index
+  @return pair list with all (8) L-pattern positions
 |#
 (define (generate-edges row col)
   (cond
@@ -332,10 +364,10 @@
 
 
 #|
-  Retrieves the edges (possible positions) of the node (current position)
+  Retrieves the edges (possible positions) of the node (current position).
   @param position list with two non-negative integers (zero and positive) as initial position (node) of the knight with the format '(row column)
   @param board-size exact-integer greater than 4
-  @return list of knight's possible positions as edges
+  @return pair list with the knight's possible positions as edges
 |#
 (define (get-edges position board-size)
   (cond
