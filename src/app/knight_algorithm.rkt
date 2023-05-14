@@ -85,7 +85,7 @@
   @return boolean (true: the move meets the conditions || false: the move doesn't meet the conditions)
 |#
 (define (valid-move? move board)
-  (and (> move 0) (<= move (expt (size board) 2)))
+  (and (> move 0) (<= move (expt (length board) 2)))
 )
 
 
@@ -100,21 +100,19 @@
 (define (tour? knight-position board-size)
   (cond
     ((even? board-size) #t)
-    (else (even? (+ (first knight-position) (second knight-position)))
-    )
+    (else (even? (+ (first knight-position) (second knight-position))))
   )
 )
 
 
 #|
-  Returns the array length.
-  @param array list data type
-  @return positive integer as the number of array elements 
+
 |#
-(define (size array)
+(define (available? position solution)
   (cond
-    ((or (null? array) (not (list? array))) (raise-argument-error 'kt-size "list" array))
-    (else (length array))
+    ((null? solution) #t)
+    ((equal? position (car solution)) #f)
+    (else (available? position (cdr solution)))
   )
 )
 
@@ -196,7 +194,7 @@
   (cond
     ((null? solution) board)
     ((not (valid-move? move board)) (raise-argument-error 'kt-read-solution "move doesn't meet the requirements" move))
-    ((not (valid-position? (car solution) (size board))) (raise-argument-error 'kt-read-solution "position doesn't meet the requirements" (car solution)))
+    ((not (valid-position? (car solution) (length board))) (raise-argument-error 'kt-read-solution "position doesn't meet the requirements" (car solution)))
     (else (read-solution (cdr solution) (assign-move move (car solution) board) (+ move 1)))
   )
 )
@@ -226,14 +224,14 @@
   @param board matrix to display the solution matrix form
   @return matrix as the solution matrix form
 |#
-(define (update-board move position board)
-  (cond 
-    ((or (null? move) (null? position) (null? board)) (error "kt-update-board arguments must be non-null"))
-    ((not (valid-move? move board)) (raise-argument-error 'kt-update-board "move doesn't meet the requirements" move))
-    ((not (valid-position? position (size board))) (raise-argument-error 'kt-update-board "position doesn't meet the requirements" position))
-    (else (assign-move move position board))
-  )
-)
+; (define (update-board move position board)
+;   (cond 
+;     ((or (null? move) (null? position) (null? board)) (error "kt-update-board arguments must be non-null"))
+;     ((not (valid-move? move board)) (raise-argument-error 'kt-update-board "move doesn't meet the requirements" move))
+;     ((not (valid-position? position (length board))) (raise-argument-error 'kt-update-board "position doesn't meet the requirements" position))
+;     (else (assign-move move position board))
+;   )
+; )
 
 
 #|
@@ -294,12 +292,12 @@
   @param col integer as col index
   @return integer as position value
 |#
-(define (check-col position row (col 0))
-  (cond
-    ((equal? (second position) col) (car row))
-    (else (check-col position (cdr row) (+ col 1)))
-  )
-)
+; (define (check-col position row (col 0))
+;   (cond
+;     ((equal? (second position) col) (car row))
+;     (else (check-col position (cdr row) (+ col 1)))
+;   )
+; )
 
 
 #|
@@ -309,12 +307,12 @@
   @param row integer as row index
   @return integer as position value
 |#
-(define (check-row position board (row 0))
-  (cond
-    ((equal? (first position) row) (check-col position (car board)))
-    (else (check-row position (cdr board) (+ row 1)))
-  )
-)
+; (define (check-row position board (row 0))
+;   (cond
+;     ((equal? (first position) row) (check-col position (car board)))
+;     (else (check-row position (cdr board) (+ row 1)))
+;   )
+; )
 
 
 #|
@@ -323,12 +321,12 @@
   @param board integer matrix
   @return integer as board position value
 |#
-(define (check-position position board)
-  (cond
-    ((or (null? position) (null? board)) (error "kt-check-position arguments must be non-null"))
-    (else (check-row position board))
-  )
-)
+; (define (check-position position board)
+;   (cond
+;     ((or (null? position) (null? board)) (error "kt-check-position arguments must be non-null"))
+;     (else (check-row position board))
+;   )
+; )
 
 
 #|
@@ -337,12 +335,40 @@
   @param board integer matrix
   @return boolean (true: if the board position for the next solution's move is available | false: if the board position is not available)
 |#
-(define (available? position board)
+; (define (available? position board)
+;   (cond
+;     ((or (null? position) (null? board)) (error "kt-available? arguments must be non-null"))
+;     ((not (valid-size? (length board))) (raise-argument-error 'kt-available? "board size doesn't meet the requirements" board))
+;     ((not (valid-position? position (length board))) (raise-argument-error 'kt-available? "position doesn't meet the requirements" position))
+;     (else (zero? (check-position position board)))
+;   )
+; )
+
+
+#|
+  Goes through the edges looking for the chosen node and returns it.
+  @param node random integer as the node selected to be the next node
+  @param nodes pair list as nodes
+  @param node-index integer as node index
+  @return pair as the node selected
+|#
+(define (select-node node nodes (node-index 0))
   (cond
-    ((or (null? position) (null? board)) (error "kt-available? arguments must be non-null"))
-    ((not (valid-size? (size board))) (raise-argument-error 'kt-available? "board size doesn't meet the requirements" board))
-    ((not (valid-position? position (size board))) (raise-argument-error 'kt-available? "position doesn't meet the requirements" position))
-    (else (zero? (check-position position board)))
+    ((equal? node node-index) (car nodes))
+    (else (select-node node (cdr nodes) (+ node-index 1)))
+  )
+)
+
+
+#|
+  Selects a node-index from the available node list and returns it.
+  @param nodes pair list as the current node next nodes
+  @return pair as the node selected
+|#
+(define (random-node nodes)
+  (cond
+    ((null? nodes) '())
+    (else (select-node (random (length nodes)) nodes))
   )
 )
 
@@ -368,43 +394,26 @@
   @param available empty list
   @return list with the available edges
 |#
-(define (available-edges edges board (available '()))
+; (define (available-edges edges board (available '()))
+;   (cond
+;     ((null? edges) available)
+;     (else 
+;       (cond
+;         ((available? (car edges) board) (available-edges (cdr edges) board (append available (list (car edges)))))
+;         (else (available-edges (cdr edges) board available))
+;       )
+;     )
+;   )
+; )
+(define (available-edges edges solution (available '()))
   (cond
     ((null? edges) available)
-    (else 
+    (else
       (cond
-        ((available? (car edges) board) (available-edges (cdr edges) board (append available (list (car edges)))))
-        (else (available-edges (cdr edges) board available))
+        ((available? (car edges) solution) (available-edges (cdr edges) solution (append available (list (car edges)))))
+        (else (available-edges (cdr edges) solution available))
       )
     )
-  )
-)
-
-
-#|
-  Goes through the edges looking for the chosen node and returns it.
-  @param node random integer as the edge selected to be the next node
-  @param edges pair list as edges
-  @param edge integer as edge index
-  @return pair as the node selected
-|#
-(define (select-node node edges (edge 0))
-  (cond
-    ((equal? node edge) (car edges))
-    (else (select-node node (cdr edges) (+ edge 1)))
-  )
-)
-
-
-#|
-  Selects a node-index from the available edge list and returns it.
-  @param available-edges pair list as edges of the current node
-  @return pair as the node selected
-|#
-(define (next-node available-edges)
-  (cond
-    ((null? available-edges) '())
-    (else (select-node (random (length available-edges)) available-edges))
   )
 )
 
@@ -516,13 +525,121 @@
 )
 
 
+#|
+  
+|#
+(define (sort-degrees-aux degrees (pivot (second (car degrees))) (less '()) (equal '()) (greater '()))
+  (cond 
+    ((null? degrees) (append (sort-degrees less) equal (sort-degrees greater)))
+    (else
+      (cond
+        ((> pivot (second (car degrees)))
+          (sort-degrees-aux (cdr degrees) pivot (cons (car degrees) less) equal greater)
+        )
+        ((< pivot (second (car degrees)))
+          (sort-degrees-aux (cdr degrees) pivot less equal (cons (car degrees) greater))
+        )
+        (else (sort-degrees-aux (cdr degrees) pivot less (cons (car degrees) equal) greater))
+      )
+    )
+  )
+)
+
+
+#|
+  
+|#
+(define (sort-degrees degrees)
+  (cond 
+    ((null? degrees) '())
+    (else (sort-degrees-aux degrees))
+  )
+)
+
+
+#|
+  
+|#
+(define (nodes-degree nodes graph solution (degrees '()))
+  (cond
+    ((null? nodes) (sort-degrees degrees))
+    (else 
+      (nodes-degree
+        (cdr nodes)
+        graph
+        solution
+        (cons (append (list (car nodes)) (list (length (available-edges (edges (car nodes) graph) solution)))) degrees)
+      )
+    )
+  )
+)
+
+#|
+  
+|#
+(define (nodes-min-degree degrees (min-degree (car degrees)) (nodes '()))
+  (cond
+    ((null? degrees) nodes)
+    ((not (equal? (second min-degree) (second (car degrees)))) nodes)
+    (else (nodes-min-degree (cdr degrees) min-degree (cons (first (car degrees)) nodes)))
+  )
+)
+
+
+#|
+  
+|#
+(define  (choose-node nodes)
+  (cond
+    ((> (length nodes) 1) (random-node nodes))
+    (else (car nodes))
+  )
+)
+
+
+#|
+  
+|#
+(define (next-node node available-edges graph solution)
+  (cond
+    ((null? available-edges) node)
+    (else (choose-node (nodes-min-degree (nodes-degree available-edges graph solution))))
+  )
+)
+
+
+#|
+  
+|#
+(define (create-solution board-size knight-position graph (solution '()))
+  (cond
+    ((equal? (length solution) (expt board-size 2)) solution)
+    (else
+      (create-solution 
+        board-size 
+        (next-node knight-position (available-edges (edges knight-position graph) solution) graph (append solution (list knight-position)))
+        graph 
+        (append solution (list knight-position))
+      )
+    )
+  )
+)
+
+
 ; MAIN FUNCTIONS ------------------------------------------------------------------------------------------------------------------
 
 (define (solution board-size knight-position)
   (displayln "\n>>> KT-Solution 💡 <<<")(display "'board-size'\t\t: ")(displayln board-size)(display "'knight-position'\t: ")(displayln knight-position)(display "\n")
+  (cond
+    ((or (null? board-size) (null? knight-position)) (error "kt-solution arguments must be non-null"))
+    ((not (valid-size? board-size)) (raise-argument-error 'kt-solution "board-size doesn't meet the requirements" board-size))
+    ((not (valid-position? knight-position board-size )) (raise-argument-error 'kt-available? "position doesn't meet the requirements" knight-position))
+    ((not (tour? knight-position board-size)) (displayln "A complete Knight's Tour didn't not exist from this board position"))
+    (else (create-solution board-size knight-position (create-graph board-size)))
+  )
 )
 
-(define (solutions board-size knight-position)
+(define (solutions n board-size knight-position)
   (displayln "\n>>> KT-Solutions 📦 <<<")(display "'board-size'\t\t: ")(displayln board-size)(display "'knight-position'\t: ")(displayln knight-position)(display "\n")
 )
 
@@ -633,20 +750,23 @@
 ; (valid-solution? board-size sol)
 ; (tour? '(0 0) board-size)
 ; (tour? '(1 0) board-size)
-; (size board)
-; (size sol)
+; (length board)
+; (length sol)
 ; (create-board board-size)
 ; (generate-board board-size sol)
 ; (update-board 23 '(2 2) (create-board 5))
 ; (print-board board)
 ; (check-position knight-position board)
 ; (available? knight-position board)
-; (next-node available-positions)
+; (random-node available-positions)
 ; (get-edges '(2 2) board-size)
 ; (get-edges '(0 0) board-size)
 ; (create-graph 5)
 
-; (solution board-size knight-position)
+ (solution board-size knight-position)
+ (solution board-size knight-position)
+ (solution board-size knight-position)
 ; (solutions board-size knight-position)
 ; (test board-size sol)
+; (test board-size (solution board-size knight-position))
 ; (paint board-size sol)
