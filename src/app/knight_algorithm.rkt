@@ -106,13 +106,16 @@
 
 
 #|
-
+  Checks if the element is part of the array.
+  @param element list element
+  @param array list
+  @return boolean (true: if the element isn't part of array is available | false: if the element isn't part of array is not available)
 |#
-(define (available? position solution)
+(define (available? element array)
   (cond
-    ((null? solution) #t)
-    ((equal? position (car solution)) #f)
-    (else (available? position (cdr solution)))
+    ((null? array) #t)
+    ((equal? element (car array)) #f)
+    (else (available? element (cdr array)))
   )
 )
 
@@ -218,23 +221,6 @@
 
 
 #|
-  Retrieves the Knight´s Tour board looking for the position and assigns the move to the position.
-  @param move positive exact-integer as solution's move (n)
-  @param position list with two non-negative integers (zero and positive) as solution move position with the format '(row column)
-  @param board matrix to display the solution matrix form
-  @return matrix as the solution matrix form
-|#
-; (define (update-board move position board)
-;   (cond 
-;     ((or (null? move) (null? position) (null? board)) (error "kt-update-board arguments must be non-null"))
-;     ((not (valid-move? move board)) (raise-argument-error 'kt-update-board "move doesn't meet the requirements" move))
-;     ((not (valid-position? position (length board))) (raise-argument-error 'kt-update-board "position doesn't meet the requirements" position))
-;     (else (assign-move move position board))
-;   )
-; )
-
-
-#|
   Displays in terminal the row elements with the "##" string format.
   @param row integer list as board row
   @return the row string format
@@ -286,67 +272,7 @@
 
 
 #|
-  Returns the position value.
-  @param position list with two non-negative integers (zero and positive) as board position with the format '(row column)
-  @param row integer list
-  @param col integer as col index
-  @return integer as position value
-|#
-; (define (check-col position row (col 0))
-;   (cond
-;     ((equal? (second position) col) (car row))
-;     (else (check-col position (cdr row) (+ col 1)))
-;   )
-; )
-
-
-#|
-  Retrieves the board looking for the position using check-col as aux function.
-  @param position list with two non-negative integers (zero and positive) as board position with the format '(row column)
-  @param board integer matrix
-  @param row integer as row index
-  @return integer as position value
-|#
-; (define (check-row position board (row 0))
-;   (cond
-;     ((equal? (first position) row) (check-col position (car board)))
-;     (else (check-row position (cdr board) (+ row 1)))
-;   )
-; )
-
-
-#|
-  Retrieves the board looking for the position value and returns it.
-  @param position list with two non-negative integers (zero and positive) as board position with the format '(row column)
-  @param board integer matrix
-  @return integer as board position value
-|#
-; (define (check-position position board)
-;   (cond
-;     ((or (null? position) (null? board)) (error "kt-check-position arguments must be non-null"))
-;     (else (check-row position board))
-;   )
-; )
-
-
-#|
-  Checks if a board position is available for a solution's move. Available position has 0 as value.
-  @param position list with two non-negative integers (zero and positive) as board position with the format '(row column)
-  @param board integer matrix
-  @return boolean (true: if the board position for the next solution's move is available | false: if the board position is not available)
-|#
-; (define (available? position board)
-;   (cond
-;     ((or (null? position) (null? board)) (error "kt-available? arguments must be non-null"))
-;     ((not (valid-size? (length board))) (raise-argument-error 'kt-available? "board size doesn't meet the requirements" board))
-;     ((not (valid-position? position (length board))) (raise-argument-error 'kt-available? "position doesn't meet the requirements" position))
-;     (else (zero? (check-position position board)))
-;   )
-; )
-
-
-#|
-  Goes through the edges looking for the chosen node and returns it.
+  Goes through the nodes looking for the chosen node and returns it.
   @param node random integer as the node selected to be the next node
   @param nodes pair list as nodes
   @param node-index integer as node index
@@ -388,23 +314,12 @@
 
 
 #|
-  Filters the edges returning only the available edges.
+  Filters the edges returning only the available edges using the available? aux function.
   @param edges pair list as edges
-  @param board integer matrix
+  @param solution pair list as solution
   @param available empty list
   @return list with the available edges
 |#
-; (define (available-edges edges board (available '()))
-;   (cond
-;     ((null? edges) available)
-;     (else 
-;       (cond
-;         ((available? (car edges) board) (available-edges (cdr edges) board (append available (list (car edges)))))
-;         (else (available-edges (cdr edges) board available))
-;       )
-;     )
-;   )
-; )
 (define (available-edges edges solution (available '()))
   (cond
     ((null? edges) available)
@@ -527,6 +442,12 @@
 
 #|
   
+  @param degrees 
+  @param pivot 
+  @param less 
+  @param equal 
+  @param greater 
+  @return 
 |#
 (define (sort-degrees-aux degrees (pivot (second (car degrees))) (less '()) (equal '()) (greater '()))
   (cond 
@@ -548,6 +469,8 @@
 
 #|
   
+  @param degrees 
+  @return 
 |#
 (define (sort-degrees degrees)
   (cond 
@@ -559,6 +482,11 @@
 
 #|
   
+  @param nodes 
+  @param graph 
+  @param solution 
+  @param degrees 
+  @return 
 |#
 (define (nodes-degree nodes graph solution (degrees '()))
   (cond
@@ -574,8 +502,13 @@
   )
 )
 
+
 #|
   
+  @param degrees 
+  @param min-degree 
+  @param nodes 
+  @return 
 |#
 (define (nodes-min-degree degrees (min-degree (car degrees)) (nodes '()))
   (cond
@@ -588,8 +521,10 @@
 
 #|
   
+  @param nodes 
+  @return 
 |#
-(define  (choose-node nodes)
+(define (choose-node nodes)
   (cond
     ((> (length nodes) 1) (random-node nodes))
     (else (car nodes))
@@ -599,6 +534,11 @@
 
 #|
   
+  @param node 
+  @param available-edges 
+  @param graph 
+  @param solution 
+  @return 
 |#
 (define (next-node node available-edges graph solution)
   (cond
@@ -610,6 +550,11 @@
 
 #|
   
+  @param board-size 
+  @param knight-position 
+  @param graph 
+  @param solution 
+  @return 
 |#
 (define (create-solution board-size knight-position graph (solution '()))
   (cond
@@ -617,7 +562,12 @@
     (else
       (create-solution 
         board-size 
-        (next-node knight-position (available-edges (edges knight-position graph) solution) graph (append solution (list knight-position)))
+        (next-node 
+          knight-position 
+          (available-edges (edges knight-position graph) solution) 
+          graph 
+          (append solution (list knight-position))
+        )
         graph 
         (append solution (list knight-position))
       )
@@ -626,25 +576,74 @@
 )
 
 
+#|
+  
+  @param n 
+  @param board-size 
+  @param knight-position 
+  @param graph 
+  @param solution 
+  @return 
+|#
+(define (create-solutions n board-size knight-position graph (solutions '()) (solution (create-solution board-size knight-position graph)))
+  (cond
+    ((null? solution) solutions)
+    ((equal? (length solutions) n) solutions)
+    (else
+      (cond
+        ((available? solution solutions) (create-solutions n board-size knight-position graph (cons solution solutions)))
+        (else (create-solutions n board-size knight-position graph solutions))
+      )
+    )
+  )
+)
+
+
 ; MAIN FUNCTIONS ------------------------------------------------------------------------------------------------------------------
 
+#|
+  
+  @param board-size 
+  @param knight-position 
+  @return 
+|#
 (define (solution board-size knight-position)
-  (displayln "\n>>> KT-Solution 💡 <<<")(display "'board-size'\t\t: ")(displayln board-size)(display "'knight-position'\t: ")(displayln knight-position)(display "\n")
   (cond
     ((or (null? board-size) (null? knight-position)) (error "kt-solution arguments must be non-null"))
     ((not (valid-size? board-size)) (raise-argument-error 'kt-solution "board-size doesn't meet the requirements" board-size))
-    ((not (valid-position? knight-position board-size )) (raise-argument-error 'kt-available? "position doesn't meet the requirements" knight-position))
-    ((not (tour? knight-position board-size)) (displayln "A complete Knight's Tour didn't not exist from this board position"))
+    ((not (valid-position? knight-position board-size )) (raise-argument-error 'kt-solution "position doesn't meet the requirements" knight-position))
+    ((not (tour? knight-position board-size)) (displayln "A complete Knight's Tour didn't not exist from this board position! 🐴\n"))
     (else (create-solution board-size knight-position (create-graph board-size)))
   )
 )
 
+
+#|
+  
+  @param n 
+  @param board-size 
+  @param knight-position 
+  @return 
+|#
 (define (solutions n board-size knight-position)
-  (displayln "\n>>> KT-Solutions 📦 <<<")(display "'board-size'\t\t: ")(displayln board-size)(display "'knight-position'\t: ")(displayln knight-position)(display "\n")
+  (cond
+    ((or (null? board-size) (null? knight-position)) (error "kt-solutions arguments must be non-null"))
+    ((or (not (exact-positive-integer? n)) (> n (expt board-size 2))) (raise-argument-error 'kt-solutions "n doesn't meet the requirements" n))
+    ((not (valid-size? board-size)) (raise-argument-error 'kt-solutions "board-size doesn't meet the requirements" board-size))
+    ((not (valid-position? knight-position board-size )) (raise-argument-error 'kt-solutions "position doesn't meet the requirements" knight-position))
+    ((not (tour? knight-position board-size)) (displayln "A complete Knight's Tour didn't not exist from this board position! 🐴\n"))
+    (else (create-solutions n board-size knight-position (create-graph board-size)))
+  )
 )
 
+
+#|
+  
+  @param board-size 
+  @param solution 
+  @return 
+|#
 (define (test board-size solution)
-  (displayln "\n>>> KT-Test ✅ <<<")(display "'board-size'\t: ")(displayln board-size)(display "'solution'\t: ")(displayln solution)(display "\n")
   (cond 
     ((or (null? board-size) (null? solution)) (error "kt-test arguments must be non-null"))
     ((not (valid-size? board-size)) (raise-argument-error 'kt-test "board-size doesn't meet the requirements" board-size))
@@ -653,8 +652,14 @@
   )
 )
 
+
+#|
+  
+  @param board-size 
+  @param solution 
+  @return 
+|#
 (define (paint board-size solution)
-  (displayln "\n>>> KT-Paint 🎨 <<<")(display "'board-size'\t: ")(displayln board-size)(display "'solution'\t: ")(displayln solution)
   (cond
     ((or (null? board-size) (null? solution)) (error "kt-paint arguments must be non-null"))
     ((not (valid-size? board-size)) (raise-argument-error 'kt-paint "board-size doesn't meet the requirements" board-size))
@@ -676,97 +681,104 @@
 |#
 
 (define board-size 5)
-(define knight-position '(2 2))
+(define knight-position '(0 0))
+(define n-sol (expt board-size 2))
 
-(define board 
- '(
-    (01 06 15 10 21)
-    (14 09 20 05 16)
-    (19 02 07 22 11)
-    (08 13 24 17 04)
-    (25 18 03 12 23)
-  )
-)
+; (define graph 
+;   '(
+;     ((0 0) ((1 2) (2 1))) 
+;     ((0 1) ((1 3) (2 0) (2 2))) 
+;     ((0 2) ((1 0) (1 4) (2 1) (2 3))) 
+;     ((0 3) ((1 1) (2 2) (2 4))) 
+;     ((0 4) ((1 2) (2 3))) 
+
+;     ((1 0) ((0 2) (2 2) (3 1))) 
+;     ((1 1) ((0 3) (2 3) (3 0) (3 2))) 
+;     ((1 2) ((0 0) (0 4) (2 0) (2 4) (3 1) (3 3))) 
+;     ((1 3) ((0 1) (2 1) (3 2) (3 4))) 
+;     ((1 4) ((0 2) (2 2) (3 3))) 
+
+;     ((2 0) ((0 1) (1 2) (3 2) (4 1))) 
+;     ((2 1) ((0 0) (0 2) (1 3) (3 3) (4 0) (4 2))) 
+;     ((2 2) ((0 1) (0 3) (1 0) (1 4) (3 0) (3 4) (4 1) (4 3))) 
+;     ((2 3) ((0 2) (0 4) (1 1) (3 1) (4 2) (4 4))) 
+;     ((2 4) ((0 3) (1 2) (3 2) (4 3))) 
+
+;     ((3 0) ((1 1) (2 2) (4 2))) 
+;     ((3 1) ((1 0) (1 2) (2 3) (4 3))) 
+;     ((3 2) ((1 1) (1 3) (2 0) (2 4) (4 0) (4 4))) 
+;     ((3 3) ((1 2) (1 4) (2 1) (4 1))) 
+;     ((3 4) ((1 3) (2 2) (4 2))) 
+
+;     ((4 0) ((2 1) (3 2))) 
+;     ((4 1) ((2 0) (2 2) (3 3))) 
+;     ((4 2) ((2 1) (2 3) (3 0) (3 4))) 
+;     ((4 3) ((2 2) (2 4) (3 1))) 
+;     ((4 4) ((2 3) (3 2))) 
+;   )
+; )
 
 (define sol
   '(
-    (0 0) (2 1) (4 2) (3 4) (1 3) ; 01 - 05
-    (0 1) (2 2) (3 0) (1 1) (0 3) ; 06 - 10
-    (2 4) (4 3) (3 1) (1 0) (0 2) ; 11 - 15
-    (1 4) (3 3) (4 1) (2 0) (1 2) ; 16 - 20
-    (0 4) (2 3) (4 4) (3 2) (4 0) ; 21 - 25
+    (0 0) (2 1) (4 2) (3 4) (1 3) ; 01 02 03 04 05
+    (0 1) (2 2) (3 0) (1 1) (0 3) ; 06 07 08 09 10
+    (2 4) (4 3) (3 1) (1 0) (0 2) ; 11 12 13 14 15
+    (1 4) (3 3) (4 1) (2 0) (1 2) ; 16 17 18 19 20
+    (0 4) (2 3) (4 4) (3 2) (4 0) ; 21 22 23 24 25
   )
 )
 
-(define graph 
-  '(
-    ((0 0) ((1 2) (2 1))) 
-    ((0 1) ((1 3) (2 0) (2 2))) 
-    ((0 2) ((1 0) (1 4) (2 1) (2 3))) 
-    ((0 3) ((1 1) (2 2) (2 4))) 
-    ((0 4) ((1 2) (2 3))) 
+; (define sols
+;   '(
+;     ((0 0) (1 2) (0 4) (2 3) (4 4) (3 2) (4 0) (2 1) (0 2) (1 0) (3 1) (4 3) (2 4) (0 3) (1 1) (3 0) (4 2) (3 4) (1 3) (0 1) (2 0) (4 1) (3 3) (1 4) (2 2)) 
+;     ((0 0) (2 1) (4 0) (3 2) (4 4) (2 3) (0 4) (1 2) (3 1) (1 0) (0 2) (1 4) (3 3) (4 1) (2 0) (0 1) (1 3) (3 4) (4 2) (3 0) (1 1) (0 3) (2 2) (4 3) (2 4)) 
+;     ((0 0) (1 2) (0 4) (2 3) (4 4) (3 2) (4 0) (2 1) (3 3) (1 4) (0 2) (1 0) (3 1) (4 3) (2 4) (0 3) (1 1) (3 0) (4 2) (3 4) (1 3) (0 1) (2 2) (4 1) (2 0)) 
+;     ((0 0) (2 1) (4 0) (3 2) (4 4) (2 3) (0 4) (1 2) (3 3) (1 4) (0 2) (1 0) (3 1) (4 3) (2 4) (0 3) (1 1) (3 0) (4 2) (3 4) (1 3) (0 1) (2 0) (4 1) (2 2)) 
+;     ((0 0) (1 2) (0 4) (2 3) (4 4) (3 2) (4 0) (2 1) (0 2) (1 4) (3 3) (4 1) (2 0) (0 1) (1 3) (3 4) (4 2) (3 0) (1 1) (0 3) (2 4) (4 3) (3 1) (1 0) (2 2)) 
 
-    ((1 0) ((0 2) (2 2) (3 1))) 
-    ((1 1) ((0 3) (2 3) (3 0) (3 2))) 
-    ((1 2) ((0 0) (0 4) (2 0) (2 4) (3 1) (3 3))) 
-    ((1 3) ((0 1) (2 1) (3 2) (3 4))) 
-    ((1 4) ((0 2) (2 2) (3 3))) 
+;     ((0 0) (1 2) (0 4) (2 3) (4 4) (3 2) (4 0) (2 1) (4 2) (3 0) (1 1) (0 3) (2 4) (4 3) (3 1) (1 0) (0 2) (1 4) (3 3) (4 1) (2 0) (0 1) (2 2) (3 4) (1 3)) 
+;     ((0 0) (2 1) (4 0) (3 2) (4 4) (2 3) (0 4) (1 2) (3 1) (4 3) (2 4) (0 3) (1 1) (3 0) (4 2) (3 4) (1 3) (0 1) (2 0) (4 1) (3 3) (1 4) (0 2) (1 0) (2 2)) 
+;     ((0 0) (2 1) (4 0) (3 2) (4 4) (2 3) (0 4) (1 2) (2 0) (4 1) (3 3) (1 4) (0 2) (1 0) (3 1) (4 3) (2 4) (0 3) (1 1) (3 0) (4 2) (3 4) (1 3) (0 1) (2 2)) 
+;     ((0 0) (1 2) (0 4) (2 3) (4 4) (3 2) (4 0) (2 1) (3 3) (1 4) (0 2) (1 0) (3 1) (4 3) (2 4) (0 3) (1 1) (3 0) (4 2) (3 4) (1 3) (0 1) (2 0) (4 1) (2 2)) 
+;     ((0 0) (1 2) (0 4) (2 3) (4 4) (3 2) (4 0) (2 1) (1 3) (0 1) (2 0) (4 1) (3 3) (1 4) (0 2) (1 0) (3 1) (4 3) (2 4) (0 3) (1 1) (3 0) (2 2) (3 4) (4 2)) 
 
-    ((2 0) ((0 1) (1 2) (3 2) (4 1))) 
-    ((2 1) ((0 0) (0 2) (1 3) (3 3) (4 0) (4 2))) 
-    ((2 2) ((0 1) (0 3) (1 0) (1 4) (3 0) (3 4) (4 1) (4 3))) 
-    ((2 3) ((0 2) (0 4) (1 1) (3 1) (4 2) (4 4))) 
-    ((2 4) ((0 3) (1 2) (3 2) (4 3))) 
+;     ((0 0) (1 2) (0 4) (2 3) (4 4) (3 2) (4 0) (2 1) (3 3) (4 1) (2 0) (0 1) (1 3) (3 4) (4 2) (3 0) (1 1) (0 3) (2 4) (4 3) (3 1) (1 0) (2 2) (1 4) (0 2)) 
+;     ((0 0) (2 1) (4 0) (3 2) (4 4) (2 3) (0 4) (1 2) (3 1) (1 0) (0 2) (1 4) (3 3) (4 1) (2 0) (0 1) (1 3) (3 4) (4 2) (3 0) (1 1) (0 3) (2 4) (4 3) (2 2)) 
+;     ((0 0) (1 2) (0 4) (2 3) (4 4) (3 2) (4 0) (2 1) (4 2) (3 4) (1 3) (0 1) (2 0) (4 1) (3 3) (1 4) (0 2) (1 0) (3 1) (4 3) (2 4) (0 3) (1 1) (3 0) (2 2)) 
+;     ((0 0) (1 2) (0 4) (2 3) (4 4) (3 2) (4 0) (2 1) (1 3) (3 4) (4 2) (3 0) (1 1) (0 3) (2 4) (4 3) (3 1) (1 0) (0 2) (1 4) (3 3) (4 1) (2 0) (0 1) (2 2)) 
+;     ((0 0) (2 1) (4 0) (3 2) (4 4) (2 3) (0 4) (1 2) (3 3) (1 4) (0 2) (1 0) (3 1) (4 3) (2 4) (0 3) (1 1) (3 0) (4 2) (3 4) (1 3) (0 1) (2 2) (4 1) (2 0)) 
 
-    ((3 0) ((1 1) (2 2) (4 2))) 
-    ((3 1) ((1 0) (1 2) (2 3) (4 3))) 
-    ((3 2) ((1 1) (1 3) (2 0) (2 4) (4 0) (4 4))) 
-    ((3 3) ((1 2) (1 4) (2 1) (4 1))) 
-    ((3 4) ((1 3) (2 2) (4 2))) 
+;     ((0 0) (2 1) (4 0) (3 2) (4 4) (2 3) (0 4) (1 2) (2 4) (0 3) (1 1) (3 0) (4 2) (3 4) (1 3) (0 1) (2 0) (4 1) (3 3) (1 4) (0 2) (1 0) (2 2) (4 3) (3 1)) 
+;     ((0 0) (1 2) (0 4) (2 3) (4 4) (3 2) (4 0) (2 1) (0 2) (1 0) (3 1) (4 3) (2 4) (0 3) (1 1) (3 0) (4 2) (3 4) (1 3) (0 1) (2 0) (4 1) (2 2) (1 4) (3 3)) 
+;     ((0 0) (2 1) (4 0) (3 2) (4 4) (2 3) (0 4) (1 2) (2 4) (4 3) (3 1) (1 0) (0 2) (1 4) (3 3) (4 1) (2 0) (0 1) (1 3) (3 4) (4 2) (3 0) (2 2) (0 3) (1 1)) 
+;     ((0 0) (2 1) (4 0) (3 2) (4 4) (2 3) (0 4) (1 2) (3 1) (4 3) (2 4) (0 3) (1 1) (3 0) (4 2) (3 4) (1 3) (0 1) (2 0) (4 1) (3 3) (1 4) (2 2) (1 0) (0 2)) 
+;     ((0 0) (1 2) (0 4) (2 3) (4 4) (3 2) (4 0) (2 1) (1 3) (3 4) (4 2) (3 0) (1 1) (0 3) (2 4) (4 3) (3 1) (1 0) (0 2) (1 4) (3 3) (4 1) (2 2) (0 1) (2 0)) 
 
-    ((4 0) ((2 1) (3 2))) 
-    ((4 1) ((2 0) (2 2) (3 3))) 
-    ((4 2) ((2 1) (2 3) (3 0) (3 4))) 
-    ((4 3) ((2 2) (2 4) (3 1))) 
-    ((4 4) ((2 3) (3 2))) 
-  )
-)
+;     ((0 0) (2 1) (4 0) (3 2) (4 4) (2 3) (0 4) (1 2) (2 0) (0 1) (1 3) (3 4) (4 2) (3 0) (1 1) (0 3) (2 4) (4 3) (3 1) (1 0) (0 2) (1 4) (2 2) (4 1) (3 3)) 
+;     ((0 0) (1 2) (0 4) (2 3) (4 4) (3 2) (4 0) (2 1) (4 2) (3 4) (1 3) (0 1) (2 0) (4 1) (3 3) (1 4) (0 2) (1 0) (3 1) (4 3) (2 4) (0 3) (2 2) (3 0) (1 1)) 
+;     ((0 0) (2 1) (4 0) (3 2) (4 4) (2 3) (0 4) (1 2) (2 0) (4 1) (3 3) (1 4) (0 2) (1 0) (3 1) (4 3) (2 4) (0 3) (1 1) (3 0) (4 2) (3 4) (2 2) (0 1) (1 3)) 
+;     ((0 0) (1 2) (0 4) (2 3) (4 4) (3 2) (4 0) (2 1) (3 3) (4 1) (2 0) (0 1) (1 3) (3 4) (4 2) (3 0) (1 1) (0 3) (2 4) (4 3) (3 1) (1 0) (0 2) (1 4) (2 2)) 
+;     ((0 0) (1 2) (0 4) (2 3) (4 4) (3 2) (4 0) (2 1) (1 3) (0 1) (2 0) (4 1) (3 3) (1 4) (0 2) (1 0) (3 1) (4 3) (2 4) (0 3) (1 1) (3 0) (4 2) (3 4) (2 2)) 
+;   )
+; )
 
-(define available-positions 
-  (available-edges 
-    (edges '(2 2) graph)
-    '(
-      (01 00 15 10 21)
-      (14 09 20 05 00)
-      (19 02 07 22 11)
-      (08 13 24 17 04)
-      (25 18 03 00 23)
-    )
-  )
-)
 
-; (valid-size? board-size)
-; (valid-position? knight-position board-size)
-; (valid-solution? board-size sol)
-; (tour? '(0 0) board-size)
-; (tour? '(1 0) board-size)
-; (length board)
-; (length sol)
-; (create-board board-size)
-; (generate-board board-size sol)
-; (update-board 23 '(2 2) (create-board 5))
-; (print-board board)
-; (check-position knight-position board)
-; (available? knight-position board)
-; (random-node available-positions)
-; (get-edges '(2 2) board-size)
-; (get-edges '(0 0) board-size)
-; (create-graph 5)
+(displayln "\n>>> KT-Solution 💡 <<<\n")
+(solution board-size knight-position)
+(displayln "\n")
 
- (solution board-size knight-position)
- (solution board-size knight-position)
- (solution board-size knight-position)
-; (solutions board-size knight-position)
-; (test board-size sol)
-; (test board-size (solution board-size knight-position))
-; (paint board-size sol)
+(displayln "\n>>> KT-Solutions 📦 <<<\n")
+(solutions n-sol board-size knight-position)
+(displayln "\n")
+
+(displayln "\n>>> KT-Test ✅ <<<\n")
+(test board-size sol)
+(displayln "\n")
+
+(displayln "\n>>> KT-Test ✅ <<<\n")
+(test board-size (solution board-size knight-position))
+(displayln "\n")
+
+(displayln "\n>>> KT-Paint 🎨 <<<\n")
+(paint board-size sol)
+(displayln "\n")
