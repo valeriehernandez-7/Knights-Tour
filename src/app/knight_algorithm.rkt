@@ -612,11 +612,10 @@
 |#
 (define (create-solutions n board-size knight-position graph (solutions '()) (solution (create-solution board-size knight-position graph)))
   (cond
-    ((null? solution) solutions)
     ((equal? (length solutions) n) solutions)
     (else
       (cond
-        ((available? solution solutions) (create-solutions n board-size knight-position graph (cons solution solutions)))
+        ((and (not (null? solution)) (available? solution solutions)) (create-solutions n board-size knight-position graph (cons solution solutions)))
         (else (create-solutions n board-size knight-position graph solutions))
       )
     )
@@ -706,7 +705,7 @@
   4  (00 00 00 00 00)
 |#
 
-(define board-size 5)
+(define board-size 7)
 (define knight-position '(1 3))
 (define n-sol (expt board-size 2))
 
