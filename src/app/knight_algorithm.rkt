@@ -62,6 +62,7 @@
   )
 )
 
+
 #|
   Checks if the solution is a square board complete tour. To be a complete tour the provided solution
   must have (size * size) elements, this means all the board positions are visited.
@@ -222,15 +223,16 @@
 
 #|
   Displays in terminal the row elements with the "##" string format.
+  @param digits 
   @param row integer list as board row
   @return the row string format
 |#
-(define (print-col row)
+(define (print-cols digits row)
   (cond
     ((null? row) row)
     (else 
-      (display " ")(display (~r (car row) #:min-width 2 #:pad-string "0"))(display " ")
-      (print-col (cdr row))
+      (display " ")(display (~r (car row) #:min-width digits #:pad-string "0"))(display " ")
+      (print-cols digits (cdr row))
     )
   )
 )
@@ -238,33 +240,34 @@
 
 #|
   Displays in terminal the board rows using string format.
+  @param digits 
   @param board integer matrix
   @return matrix as the Knigh's Tour board
 |#
-(define (print-row board)
+(define (print-rows digits board)
   (cond
     ((null? board) board)
     (else 
       (display "  (")
-      (print-col (car board))
+      (print-cols digits (car board))
       (displayln ")")
-      (print-row (cdr board))
+      (print-rows digits (cdr board))
     )
   )
 )
 
 
 #|
-  Displays in terminal the board using print-row and print-col as aux functions.
+  Displays in terminal the board using print-rows and print-cols as aux functions.
   @param board integer matrix
   @return matrix string format as the Knigh's Tour board
 |#
-(define (print-board (board '()))
+(define (print-board board)
   (cond
     ((null? board) board)
     (else
       (displayln "(")
-      (print-row board)
+      (print-rows (+ (exact-floor (log (expt (length board) 2) 10)) 1) board)
       (displayln ")")
     )
   )
@@ -582,6 +585,7 @@
   @param board-size 
   @param knight-position 
   @param graph 
+  @param solutions empty list
   @param solution 
   @return 
 |#
@@ -600,6 +604,7 @@
 
 
 ; MAIN FUNCTIONS ------------------------------------------------------------------------------------------------------------------
+
 
 #|
   
@@ -673,11 +678,11 @@
 
 #|
        0  1  2  3  4
-  0  (01 06 15 10 21)
-  1  (14 09 20 05 16)
-  2  (19 02 07 22 11)
-  3  (08 13 24 17 04)
-  4  (25 18 03 12 23)
+  0  (00 00 00 00 00)
+  1  (00 00 00 00 00)
+  2  (00 00 00 00 00)
+  3  (00 00 00 00 00)
+  4  (00 00 00 00 00)
 |#
 
 (define board-size 5)
@@ -717,16 +722,6 @@
 ;     ((4 4) ((2 3) (3 2))) 
 ;   )
 ; )
-
-(define sol
-  '(
-    (0 0) (2 1) (4 2) (3 4) (1 3) ; 01 02 03 04 05
-    (0 1) (2 2) (3 0) (1 1) (0 3) ; 06 07 08 09 10
-    (2 4) (4 3) (3 1) (1 0) (0 2) ; 11 12 13 14 15
-    (1 4) (3 3) (4 1) (2 0) (1 2) ; 16 17 18 19 20
-    (0 4) (2 3) (4 4) (3 2) (4 0) ; 21 22 23 24 25
-  )
-)
 
 ; (define sols
 ;   '(
@@ -772,13 +767,9 @@
 (displayln "\n")
 
 (displayln "\n>>> KT-Test ✅ <<<\n")
-(test board-size sol)
-(displayln "\n")
-
-(displayln "\n>>> KT-Test ✅ <<<\n")
 (test board-size (solution board-size knight-position))
 (displayln "\n")
 
 (displayln "\n>>> KT-Paint 🎨 <<<\n")
-(paint board-size sol)
+(paint board-size (solution board-size knight-position))
 (displayln "\n")
