@@ -575,7 +575,7 @@
   @param solution 
   @return 
 |#
-(define (create-solution board-size knight-position graph (solution '()))
+(define (generate-solution board-size knight-position graph (solution '()))
   (cond
     ((null? knight-position) 
       (cond
@@ -584,7 +584,7 @@
       )
     )
     (else
-      (create-solution 
+      (generate-solution 
         board-size 
         (next-node 
           knight-position 
@@ -596,6 +596,22 @@
         (append solution (list knight-position))
       )
     )
+  )
+)
+
+
+#|
+  
+  @param board-size 
+  @param knight-position 
+  @param graph 
+  @param solution 
+  @return 
+|#
+(define (create-solution board-size knight-position graph (solution (generate-solution board-size knight-position graph)))
+  (cond
+    ((not (null? solution)) solution)
+    (else (create-solution board-size knight-position graph))
   )
 )
 
@@ -615,7 +631,7 @@
     ((equal? (length solutions) n) solutions)
     (else
       (cond
-        ((and (not (null? solution)) (available? solution solutions)) (create-solutions n board-size knight-position graph (cons solution solutions)))
+        ((available? solution solutions) (create-solutions n board-size knight-position graph (cons solution solutions)))
         (else (create-solutions n board-size knight-position graph solutions))
       )
     )
@@ -653,7 +669,7 @@
 (define (solutions n board-size knight-position)
   (cond
     ((or (null? board-size) (null? knight-position)) (error "kt-solutions arguments must be non-null"))
-    ((or (not (exact-positive-integer? n)) (> n (expt board-size 2))) (raise-argument-error 'kt-solutions "n doesn't meet the requirements" n))
+    ((or (not (exact-positive-integer? n)) (> n (* board-size 2))) (raise-argument-error 'kt-solutions "n doesn't meet the requirements" n))
     ((not (valid-size? board-size)) (raise-argument-error 'kt-solutions "board-size doesn't meet the requirements" board-size))
     ((not (valid-position? knight-position board-size )) (raise-argument-error 'kt-solutions "position doesn't meet the requirements" knight-position))
     ((not (tour? knight-position board-size)) (displayln (string-append "A complete Knight's Tour don't exist from odd position '" (~a knight-position) " in odd square board size '(" (~a board-size) ") 🐴\n")) '())
@@ -705,9 +721,9 @@
   4  (00 00 00 00 00)
 |#
 
-(define board-size 7)
-(define knight-position '(1 3))
-(define n-sol (expt board-size 2))
+(define board-size 5)
+(define knight-position '(1 1))
+(define n-sol (* board-size 2))
 
 (displayln "\n>>> KT-Solution 💡 <<<\n")
 (solution board-size knight-position)
