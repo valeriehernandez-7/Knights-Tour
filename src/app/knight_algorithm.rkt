@@ -553,13 +553,12 @@
 
 #|
   
-  @param node 
-  @param available-edges 
   @param graph 
+  @param available-edges 
   @param solution 
   @return 
 |#
-(define (next-node node available-edges graph solution)
+(define (next-node graph available-edges solution)
   (cond
     ((null? available-edges) '())
     (else (choose-node (nodes-min-degree (nodes-degree available-edges graph solution))))
@@ -587,9 +586,8 @@
       (generate-solution 
         board-size 
         (next-node 
-          knight-position 
-          (available-edges (edges knight-position graph) solution) 
           graph 
+          (available-edges (edges knight-position graph) solution) 
           (append solution (list knight-position))
         )
         graph 
@@ -722,7 +720,7 @@
 |#
 
 (define board-size 5)
-(define knight-position '(1 1))
+(define knight-position '(2 2))
 (define n-sol (* board-size 2))
 
 (displayln "\n>>> KT-Solution 💡 <<<\n")
