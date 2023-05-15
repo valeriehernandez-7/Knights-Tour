@@ -577,7 +577,12 @@
 |#
 (define (create-solution board-size knight-position graph (solution '()))
   (cond
-    ((null? knight-position) solution)
+    ((null? knight-position) 
+      (cond
+        ((equal? (length solution) (expt board-size 2)) solution)
+        (else '())
+      )
+    )
     (else
       (create-solution 
         board-size 
@@ -702,7 +707,7 @@
 |#
 
 (define board-size 5)
-(define knight-position '(0 0))
+(define knight-position '(1 3))
 (define n-sol (expt board-size 2))
 
 (displayln "\n>>> KT-Solution 💡 <<<\n")
