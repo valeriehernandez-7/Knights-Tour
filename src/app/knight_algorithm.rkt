@@ -215,7 +215,6 @@
   (cond
     ((or (null? board-size) (null? solution)) (error "kt-generate-board arguments must be non-null"))
     ((not (valid-size? board-size)) (raise-argument-error 'kt-generate-board "board-size doesn't meet the requirements" board-size))
-    ((not (valid-solution? board-size solution)) (raise-argument-error 'kt-generate-board "solution doesn't meet the requirements" solution))
     (else (read-solution solution (create-board board-size)))
   )
 )
