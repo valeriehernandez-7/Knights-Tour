@@ -562,7 +562,7 @@
 |#
 (define (next-node node available-edges graph solution)
   (cond
-    ((null? available-edges) node)
+    ((null? available-edges) '())
     (else (choose-node (nodes-min-degree (nodes-degree available-edges graph solution))))
   )
 )
@@ -578,7 +578,7 @@
 |#
 (define (create-solution board-size knight-position graph (solution '()))
   (cond
-    ((equal? (length solution) (expt board-size 2)) solution)
+    ((null? knight-position) solution)
     (else
       (create-solution 
         board-size 
@@ -634,7 +634,7 @@
     ((or (null? board-size) (null? knight-position)) (error "kt-solution arguments must be non-null"))
     ((not (valid-size? board-size)) (raise-argument-error 'kt-solution "board-size doesn't meet the requirements" board-size))
     ((not (valid-position? knight-position board-size )) (raise-argument-error 'kt-solution "position doesn't meet the requirements" knight-position))
-    ((not (tour? knight-position board-size)) (displayln "A complete Knight's Tour didn't not exist from this board position! 🐴\n") '())
+    ((not (tour? knight-position board-size)) (displayln (string-append "A complete Knight's Tour don't exist from odd position '" (~a knight-position) " in odd square board size '(" (~a board-size) ") 🐴\n")) '())
     (else (create-solution board-size knight-position (create-graph board-size)))
   )
 )
@@ -653,7 +653,7 @@
     ((or (not (exact-positive-integer? n)) (> n (expt board-size 2))) (raise-argument-error 'kt-solutions "n doesn't meet the requirements" n))
     ((not (valid-size? board-size)) (raise-argument-error 'kt-solutions "board-size doesn't meet the requirements" board-size))
     ((not (valid-position? knight-position board-size )) (raise-argument-error 'kt-solutions "position doesn't meet the requirements" knight-position))
-    ((not (tour? knight-position board-size)) (displayln "A complete Knight's Tour didn't not exist from this board position! 🐴\n") '())
+    ((not (tour? knight-position board-size)) (displayln (string-append "A complete Knight's Tour don't exist from odd position '" (~a knight-position) " in odd square board size '(" (~a board-size) ") 🐴\n")) '())
     (else (displayln "(")(print-solutions (create-solutions n board-size knight-position (create-graph board-size)))(displayln ")"))
   )
 )
