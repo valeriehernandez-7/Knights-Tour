@@ -257,26 +257,6 @@
 )
 
 
-; (read-board (+ (exact-floor (log (expt (length board) 2) 10)) 1) board)
-(define (read-board digits board)
-  (cond
-    ((null? board) (newline))
-    (else
-      (cond
-        ((null? (car board)) 
-          (newline)
-          (read-board digits (cdr board))
-        )
-        (else 
-          (display " ")(display (~r (caar board) #:min-width digits #:pad-string "0"))(display " ")
-          (read-board digits (append (list (cdar board)) (cdr board)))
-        )
-      )
-    )
-  )
-)
-
-
 #|
   Displays in terminal the board using print-rows and print-cols as aux functions.
   @param board integer matrix
@@ -289,6 +269,23 @@
       (displayln "(")
       (print-rows (+ (exact-floor (log (expt (length board) 2) 10)) 1) board)
       (displayln ")")
+    )
+  )
+)
+
+
+#|
+  Displays in terminal the elements of the solutions list.
+  @param solutions list of solutions
+  @return solutions list string format
+|#
+(define (print-solutions solutions)
+  (cond
+    ((null? solutions) (display ""))
+    (else
+      (display "  ")
+      (displayln (car solutions))
+      (print-solutions (cdr solutions))
     )
   )
 )
@@ -657,7 +654,7 @@
     ((not (valid-size? board-size)) (raise-argument-error 'kt-solutions "board-size doesn't meet the requirements" board-size))
     ((not (valid-position? knight-position board-size )) (raise-argument-error 'kt-solutions "position doesn't meet the requirements" knight-position))
     ((not (tour? knight-position board-size)) (displayln "A complete Knight's Tour didn't not exist from this board position! 🐴\n"))
-    (else (create-solutions n board-size knight-position (create-graph board-size)))
+    (else (displayln "(")(print-solutions (create-solutions n board-size knight-position (create-graph board-size)))(displayln ")"))
   )
 )
 
