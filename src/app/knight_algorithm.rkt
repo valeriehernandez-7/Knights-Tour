@@ -257,6 +257,26 @@
 )
 
 
+; (read-board (+ (exact-floor (log (expt (length board) 2) 10)) 1) board)
+(define (read-board digits board)
+  (cond
+    ((null? board) (newline))
+    (else
+      (cond
+        ((null? (car board)) 
+          (newline)
+          (read-board digits (cdr board))
+        )
+        (else 
+          (display " ")(display (~r (caar board) #:min-width digits #:pad-string "0"))(display " ")
+          (read-board digits (append (list (cdar board)) (cdr board)))
+        )
+      )
+    )
+  )
+)
+
+
 #|
   Displays in terminal the board using print-rows and print-cols as aux functions.
   @param board integer matrix
@@ -691,16 +711,16 @@
 
 (displayln "\n>>> KT-Solution 💡 <<<\n")
 (solution board-size knight-position)
-(displayln "\n")
+(newline)
 
 (displayln "\n>>> KT-Solutions 📦 <<<\n")
 (solutions n-sol board-size knight-position)
-(displayln "\n")
+(newline)
 
 (displayln "\n>>> KT-Test ✅ <<<\n")
 (test board-size (solution board-size knight-position))
-(displayln "\n")
+(newline)
 
 (displayln "\n>>> KT-Paint 🎨 <<<\n")
 (paint board-size (solution board-size knight-position))
-(displayln "\n")
+(newline)
