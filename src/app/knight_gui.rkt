@@ -30,8 +30,8 @@
 (define ui-board null)
 (define ui-board-clip null)
 (define ui-solution null)
-(define horse-i 0)
-(define horse-j 0)
+(define horse-i -100)
+(define horse-j -100)
 
 
 ;-------------------------Colors and textures-------------------------;
@@ -169,7 +169,7 @@
         (else
             (for ([i (in-range 0 size)])
                 (for ([j (in-range 0 size)])
-                    (set! ui-board (append ui-board (list (list (getValue movs i j) (+ 50 (* j 50)) (+ 15 (* i 50))))))
+                    (set! ui-board (append ui-board (list (list (getValue movs i j) (+ 38 (* j 38)) (+ 15 (* i 38))))))
                     (set! ui-board-clip ui-board)
                 )
             )
@@ -181,7 +181,7 @@
 ; Draws the canvas background
 (define (drawBackground)
     (send dc set-brush wllppr-brush)
-    (send dc draw-rectangle 0 0 1280 1000)
+    (send dc draw-rectangle 0 0 1280 800)
 )
 
 
@@ -194,7 +194,7 @@
     (for ([i (in-range 0 size)])
         ;draws each square in a row
         (for ([j (in-range 0 size)])
-            (send dc draw-rectangle (+ 50 (* j 50)) (+ 15 (* i 50)) 50 50)
+            (send dc draw-rectangle (+ 38 (* j 38)) (+ 15 (* i 38)) 38 38)
             ;alternate square colors
             (cond
                 ((false? wht_color)
@@ -231,15 +231,19 @@
     @param mov: it is a list containing number, position_x and position_y. Ex. '(1 50 50)
 |#
 (define (drawNumber mov)
+    (send dc set-font (make-object font% 14 'default))
     (send dc set-text-foreground "white")
-    ;(drawBackground)
-    ;(drawChessBoard size)
     (send dc draw-text (~v (car mov)) (cadr mov) (caddr mov) #f 0 0)
 
     
 )
-(define (drawHorse mov)
 
+#|
+    Draws the horse in the given position.
+    @param mov: it is a list containing number, position_x and position_y. Ex. '(1 50 50)
+|#
+(define (drawHorse mov)
+    (send dc set-font (make-object font% 36 'default))
     (send dc set-text-foreground "white")
     (set! horse-i (cadr mov))
     (set! horse-j (caddr mov))
@@ -249,9 +253,11 @@
     
 )
 
+#|
+    Draws the movements required when the slider is moved
+    @param n: number selected in the slider.
+|#
 (define (drawSlider n)
-;(send chessPanel refresh)
-
     (cond ((< 0 n) 
             (drawHorse (getRow ui-board (- n 1))))
         )
@@ -290,15 +296,16 @@
 
 
 (define (autoDraw)
-  (drawHorse (getRow ui-board (- (* ui-board-size ui-board-size) 1)))
-  (for ([i (in-range 0 (* ui-board-size ui-board-size))])
+    (send autoBtn enable #f)
+    (drawHorse (getRow ui-board (- (* ui-board-size ui-board-size) 1)))
+    (for ([i (in-range 0 (* ui-board-size ui-board-size))])
                     (drawHorse (getRow ui-board i))
                     (for ([j (in-range 0 i)])
                         (drawNumber (getRow ui-board j))
                         )
-                    ;(drawNumber (getRow ui-board i))
-                    (sleep 0.5)
+                    (sleep/yield 0.5)
                 )
+    
   )
 
 
@@ -325,7 +332,7 @@
         (drawChessBoard size)
         (define horse-text "♞")
         (send dc set-text-foreground "white")
-        (send dc set-font (make-object font% 36 'default))
+        (send dc set-font (make-object font% 30 'default))
         (send dc draw-text horse-text horse-i horse-j)
         )]
     )
