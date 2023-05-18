@@ -49,12 +49,14 @@
 
 ;-------------------------Program window-------------------------;
 
+(define-values (displayWidth displayHeight) (get-display-size #t))
+
 ; Creates the window that contains everything
 (define mainWindow 
     (new frame% 
         [label "Knight's Tour 🐴"]
-        [width 1280]
-        [height 800]
+        [width (- displayWidth 100)]
+        [height (- displayHeight 100)]
         [style '(no-resize-border)]
     )
 )
@@ -185,7 +187,7 @@
 ; Draws the canvas background
 (define (drawBackground)
     (send dc set-brush wllppr-brush)
-    (send dc draw-rectangle 0 0 1280 800)
+    (send dc draw-rectangle 0 0 (- displayWidth 100) (- displayHeight 100))
 )
 
 
