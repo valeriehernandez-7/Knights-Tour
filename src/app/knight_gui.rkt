@@ -303,23 +303,19 @@
 
 
 
+
+
 ; Creates a button to automate the show of the next horse movement.
 (define autoBtn
     (new button% 
         [parent mainWindow]
         [label "Auto"]
         [callback (lambda (button event)(thread autoDraw))]
+        [callback (lambda (button event)(thread autoDraw))]
     )
 )
 
-; Creates a button to restart the board with the same values.
-#|(define restartBtn
-    (new button% 
-        [parent controlPanel]
-        [label "Restart"]
-        [callback (lambda (button event)(restartDraw))]
-    )
-)|#
+
 
 ; Creates a canvas to draw the chessBoard.
 (define (chessBoard size) 

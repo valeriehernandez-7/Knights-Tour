@@ -719,7 +719,7 @@
   4  (00 00 00 00 00)
 |#
 
-(define board-size 5)
+(define board-size 12)
 (define knight-position '(2 2))
 (define n-sol (* board-size 2))
 
