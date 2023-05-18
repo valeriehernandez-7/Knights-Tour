@@ -297,28 +297,8 @@
 )
 
 
-(define (autoDraw)
-    (send autoBtn enable #f)
-    (drawHorse (getRow ui-board (- (* ui-board-size ui-board-size) 1)))
-    (for ([i (in-range 0 (* ui-board-size ui-board-size))])
-                    (drawHorse (getRow ui-board i))
-                    (for ([j (in-range 0 i)])
-                        (drawNumber (getRow ui-board j))
-                        )
-                    (sleep/yield 0.5)
-                )
-    
-  )
 
 
-; Creates a button to automate the show of the next horse movement.
-(define autoBtn
-    (new button% 
-        [parent mainWindow]
-        [label "Auto"]
-        [callback (lambda (button event)(thread autoDraw))]
-    )
-)
 
 
 ; Creates a canvas to draw the chessBoard.
