@@ -81,6 +81,7 @@
     )
 )
 
+
 #|
     Quicksort auxiliary, order the numbers that are lower than the pivot.
     @param lst: is a disordered list.
@@ -94,6 +95,7 @@
         (else (filter-less (cdr lst) pivot))
     )
 )
+
 
 #|
     Quicksort auxiliary, order the numbers that are higher than the pivot.
@@ -123,6 +125,7 @@
         (else (getRow (cdr lst) row (+ i 1)))
     )
 )
+
 
 #|
     Gets the specified value in a certain position of a row.
@@ -154,6 +157,7 @@
 )
 
 ;-------------------------Canvas-------------------------;
+
 
 #|
     Creates a list of triplets with the moves of the solution and the coordinates to write them.
@@ -224,8 +228,6 @@
 )
 
 
-
-
 #|
     Draws a given number in the given coordinates.
     @param mov: it is a list containing number, position_x and position_y. Ex. '(1 50 50)
@@ -235,35 +237,23 @@
     ;(drawBackground)
     ;(drawChessBoard size)
     (send dc draw-text (~v (car mov)) (cadr mov) (caddr mov) #f 0 0)
-
-    
 )
-(define (drawHorse mov)
 
+
+(define (drawHorse mov)
     (send dc set-text-foreground "white")
     (set! horse-i (cadr mov))
     (set! horse-j (caddr mov))
     (send chessPanel refresh)
     (sleep/yield 0.01)
-    
-    
 )
 
+
 (define (drawSlider n)
-;(send chessPanel refresh)
+    (cond ((< 0 n) (drawHorse (getRow ui-board (- n 1)))))
+    (for ([i (in-range 0 n)]) (drawNumber (getRow ui-board i)))
+)
 
-    (cond ((< 0 n) 
-            (drawHorse (getRow ui-board (- n 1))))
-        )
-
-    (for ([i (in-range 0 n)])
-                    (drawNumber (getRow ui-board i))
-                    
-                )
-    
-    
-    
-    )
 
 ; Creates a panel for buttons and controls.
 (define controlPanel 
@@ -276,7 +266,6 @@
 )
 
 
-
 ; Creates a panel for the chessBoard
 (define chessPanel 
     (new horizontal-panel% 
@@ -286,7 +275,6 @@
         [alignment '(center center)]
     )
 )
-
 
 
 (define (autoDraw)
@@ -302,9 +290,6 @@
   )
 
 
-
-
-
 ; Creates a button to automate the show of the next horse movement.
 (define autoBtn
     (new button% 
@@ -313,7 +298,6 @@
         [callback (lambda (button event)(thread autoDraw))]
     )
 )
-
 
 
 ; Creates a canvas to draw the chessBoard.
@@ -331,8 +315,6 @@
     )
 )
 
-
-
 (define (visualizer board-size solution board)
     (displayln "\nOpening the Knight's Tour 🐴 Visualizer...")
     (displayln "\n>>> KT-Visualizer 💻 <<<")
@@ -340,23 +322,12 @@
     (display "'solution'\t: ")(displayln solution)
     (display "'board'\t\t: ")(displayln board)(display "\n")
 
-
     (set! ui-board-size board-size)
     (buildMovLst ui-board-size board)
     (set! ui-solution solution)
     (play)
 )
 
-(new slider% 
-        [parent mainWindow]
-        [label "slider"]
-        [min-value 0]
-        [max-value 324] ; don´t allow to asign ui-board-size
-        [callback (lambda (slider event) 
-            (cond ((<= (send slider get-value) (length ui-board)) ; just with lenght let me do the comparison. ui-board-size caused error.
-                (drawSlider (send slider get-value) ))
-            ))]
-    )
 
 (define (play)
     (cond
@@ -365,6 +336,16 @@
             (set! dc (send (chessBoard ui-board-size) get-dc))
             ;Creates an ordered list with the movements and coordinates of the solution to draw easily
             (set! ui-board (quicksort ui-board))
+            ; animation controller set-up
+            (define animation-controller 
+                (new slider% 
+                    [parent mainWindow]
+                    [label #f]
+                    [min-value 0]
+                    [max-value (- (expt ui-board-size 2) 1)]
+                    [callback (lambda (slider event) (drawSlider (send slider get-value)))]
+                )
+            )
             ;sleep solves a drawing problem after draw canva
             (sleep/yield 0.01)
             ; Show the frame by calling its show method
