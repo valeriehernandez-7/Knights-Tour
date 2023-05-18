@@ -31,6 +31,7 @@
 (define ui-board-clip null)
 (define ui-solution null)
 
+
 ;-------------------------Colors and textures-------------------------;
 
 (define no-pen (new pen% [style 'transparent]))
@@ -43,8 +44,6 @@
 (send horse-brush set-stipple (read-bitmap "../resources/horseVector.png"))
 (send whtWood-brush set-stipple (read-bitmap "../resources/whtWood.png"))
 (send drkWood-brush set-stipple (read-bitmap "../resources/drkWood.png"))
-;(define target (make-bitmap 30 30)) ; A 30x30 bitmap
-;(define dc (new bitmap-dc% [bitmap target]))
 
 ;-------------------------Program window-------------------------;
 
@@ -237,6 +236,13 @@
 )
 
 
+(define (drawSlider n)
+;(send chessPanel refresh)
+    (for ([i (in-range 0 n)])
+                    (drawNumber (getRow ui-board i))
+                    
+                ))
+
 ; Creates a panel for buttons and controls.
 (define controlPanel 
     (new horizontal-panel% 
@@ -260,42 +266,27 @@
 )
 
 
-; Draws the next movement of the horse in the chessBoard.
-(define (drawNext)
-(cond
-    ((null? ui-board) (send nextBtn enable #f))
-    (else
-        (drawNumber (car ui-board))
-        (set! ui-board (cdr ui-board)))
-    )
-)
 
 (define (autoDraw)
-  (cond
-    [(null? ui-board) (send autoBtn enable #f) (send nextBtn enable #f) ]
-    [else (drawNext)(autoDraw)])
+  (for ([i (in-range 0 (* ui-board-size ui-board-size))])
+                    (drawNumber (getRow ui-board i))
+                )
+   (send autoBtn enable #f) 
+    
   )
 
 #|(define (restartDraw)
    (send autoBtn enable #t)
-   (send nextBtn enable #t)
    
   )|#
 
 
-; Creates a button to show the next horse movement.
-(define nextBtn
-    (new button% 
-        [parent controlPanel]
-        [label "Next"]
-        [callback (lambda (button event)(drawNext))]
-    )
-)
+
 
 ; Creates a button to automate the show of the next horse movement.
 (define autoBtn
     (new button% 
-        [parent controlPanel]
+        [parent mainWindow]
         [label "Auto"]
         [callback (lambda (button event)(autoDraw))]
     )
@@ -318,6 +309,8 @@
     )
 )
 
+
+
 (define (visualizer board-size solution board)
     (displayln "\nOpening the Knight's Tour 🐴 Visualizer...")
     (displayln "\n>>> KT-Visualizer 💻 <<<")
@@ -331,6 +324,17 @@
     (set! ui-solution solution)
     (play)
 )
+
+(new slider% 
+        [parent mainWindow]
+        [label "slider"]
+        [min-value 0]
+        [max-value 324] ; don´t allow to asign ui-board-size
+        [callback (lambda (slider event) 
+            (cond ((<= (send slider get-value) (length ui-board)) ; just with lenght let me do the comparison. ui-board-size caused error.
+                (drawSlider (send slider get-value) ))
+            ))]
+    )
 
 (define (play)
     (cond
