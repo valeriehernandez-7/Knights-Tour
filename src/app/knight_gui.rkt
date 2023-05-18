@@ -30,6 +30,8 @@
 (define ui-board null)
 (define ui-board-clip null)
 (define ui-solution null)
+(define horse-i 0)
+(define horse-j 0)
 
 
 ;-------------------------Colors and textures-------------------------;
@@ -52,7 +54,7 @@
     (new frame% 
         [label "Knight's Tour 🐴"]
         [width 1280]
-        [height 950]
+        [height 800]
         [style '(no-resize-border)]
     )
 )
@@ -222,26 +224,46 @@
 )
 
 
+
+
 #|
     Draws a given number in the given coordinates.
     @param mov: it is a list containing number, position_x and position_y. Ex. '(1 50 50)
 |#
 (define (drawNumber mov)
     (send dc set-text-foreground "white")
+    ;(drawBackground)
+    ;(drawChessBoard size)
     (send dc draw-text (~v (car mov)) (cadr mov) (caddr mov) #f 0 0)
-    ;(send dc set-brush horse-brush)
-    ;(send dc set-scale 1 0.9)
-    ;(send dc draw-bitmap (bitmap-scale selectBackground 0.25) 0 0)
-    ;(send dc draw-rectangle (cadr mov) (caddr mov) 45 50)
-)
 
+    
+)
+(define (drawHorse mov)
+
+    (send dc set-text-foreground "white")
+    (set! horse-i (cadr mov))
+    (set! horse-j (caddr mov))
+    (send chessPanel refresh)
+    (sleep/yield 0.01)
+    
+    
+)
 
 (define (drawSlider n)
 ;(send chessPanel refresh)
+
+    (cond ((< 0 n) 
+            (drawHorse (getRow ui-board (- n 1))))
+        )
+
     (for ([i (in-range 0 n)])
                     (drawNumber (getRow ui-board i))
                     
-                ))
+                )
+    
+    
+    
+    )
 
 ; Creates a panel for buttons and controls.
 (define controlPanel 
@@ -268,18 +290,16 @@
 
 
 (define (autoDraw)
+  (drawHorse (getRow ui-board (- (* ui-board-size ui-board-size) 1)))
   (for ([i (in-range 0 (* ui-board-size ui-board-size))])
-                    (drawNumber (getRow ui-board i))
+                    (drawHorse (getRow ui-board i))
+                    (for ([j (in-range 0 i)])
+                        (drawNumber (getRow ui-board j))
+                        )
+                    ;(drawNumber (getRow ui-board i))
+                    (sleep 0.5)
                 )
-   (send autoBtn enable #f) 
-    
   )
-
-#|(define (restartDraw)
-   (send autoBtn enable #t)
-   
-  )|#
-
 
 
 
@@ -288,7 +308,7 @@
     (new button% 
         [parent mainWindow]
         [label "Auto"]
-        [callback (lambda (button event)(autoDraw))]
+        [callback (lambda (button event)(thread autoDraw))]
     )
 )
 
@@ -305,7 +325,14 @@
 (define (chessBoard size) 
     (new canvas% 
         [parent chessPanel]
-        [paint-callback (lambda (canvas dc) (drawBackground)(drawChessBoard size))]
+        [paint-callback (lambda (canvas dc) 
+        (drawBackground)
+        (drawChessBoard size)
+        (define horse-text "♞")
+        (send dc set-text-foreground "white")
+        (send dc set-font (make-object font% 36 'default))
+        (send dc draw-text horse-text horse-i horse-j)
+        )]
     )
 )
 
