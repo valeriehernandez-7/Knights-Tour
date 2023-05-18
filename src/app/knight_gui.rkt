@@ -52,7 +52,7 @@
     (new frame% 
         [label "Knight's Tour 🐴"]
         [width 1280]
-        [height 950]
+        [height 800]
         [style '(no-resize-border)]
     )
 )
@@ -269,16 +269,12 @@
 
 (define (autoDraw)
   (for ([i (in-range 0 (* ui-board-size ui-board-size))])
-                    (drawNumber (getRow ui-board i))
+    (drawNumber (getRow ui-board i))
+    (sleep 0.5)
                 )
    (send autoBtn enable #f) 
     
   )
-
-#|(define (restartDraw)
-   (send autoBtn enable #t)
-   
-  )|#
 
 
 
@@ -288,18 +284,11 @@
     (new button% 
         [parent mainWindow]
         [label "Auto"]
-        [callback (lambda (button event)(autoDraw))]
+        [callback (lambda (button event)(thread autoDraw))]
     )
 )
 
-; Creates a button to restart the board with the same values.
-#|(define restartBtn
-    (new button% 
-        [parent controlPanel]
-        [label "Restart"]
-        [callback (lambda (button event)(restartDraw))]
-    )
-)|#
+
 
 ; Creates a canvas to draw the chessBoard.
 (define (chessBoard size) 
@@ -344,6 +333,7 @@
             ;Creates an ordered list with the movements and coordinates of the solution to draw easily
             (set! ui-board (quicksort ui-board))
             ;sleep solves a drawing problem after draw canva
+
             (sleep/yield 0.01)
             ; Show the frame by calling its show method
             (send mainWindow show #t)
