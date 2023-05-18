@@ -311,7 +311,6 @@
         [parent mainWindow]
         [label "Auto"]
         [callback (lambda (button event)(thread autoDraw))]
-        [callback (lambda (button event)(thread autoDraw))]
     )
 )
 
