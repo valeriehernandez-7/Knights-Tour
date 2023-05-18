@@ -191,7 +191,10 @@
 )
 
 
-; Draws an empty chessBoard of the size n*n
+#|
+    Draws an empty chessBoard of the size n*n
+    @param size: size n of the chessBoard.
+|#
 (define (drawChessBoard size)
     (send dc set-pen "black" 1 'solid)
     (send dc set-brush whtWood-brush)
