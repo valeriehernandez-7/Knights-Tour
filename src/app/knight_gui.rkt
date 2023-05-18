@@ -28,6 +28,7 @@
 
 (define ui-board-size null)
 (define ui-board null)
+(define ui-board-clip null)
 (define ui-solution null)
 
 ;-------------------------Colors and textures-------------------------;
@@ -168,6 +169,7 @@
             (for ([i (in-range 0 size)])
                 (for ([j (in-range 0 size)])
                     (set! ui-board (append ui-board (list (list (getValue movs i j) (+ 50 (* j 50)) (+ 15 (* i 50))))))
+                    (set! ui-board-clip ui-board)
                 )
             )
         )
@@ -246,6 +248,7 @@
 )
 
 
+
 ; Creates a panel for the chessBoard
 (define chessPanel 
     (new horizontal-panel% 
@@ -267,6 +270,18 @@
     )
 )
 
+(define (autoDraw)
+  (cond
+    [(null? ui-board) (send autoBtn enable #f) (send nextBtn enable #f) ]
+    [else (drawNext)(autoDraw)])
+  )
+
+#|(define (restartDraw)
+   (send autoBtn enable #t)
+   (send nextBtn enable #t)
+   
+  )|#
+
 
 ; Creates a button to show the next horse movement.
 (define nextBtn
@@ -277,6 +292,23 @@
     )
 )
 
+; Creates a button to automate the show of the next horse movement.
+(define autoBtn
+    (new button% 
+        [parent controlPanel]
+        [label "Auto"]
+        [callback (lambda (button event)(autoDraw))]
+    )
+)
+
+; Creates a button to restart the board with the same values.
+#|(define restartBtn
+    (new button% 
+        [parent controlPanel]
+        [label "Restart"]
+        [callback (lambda (button event)(restartDraw))]
+    )
+)|#
 
 ; Creates a canvas to draw the chessBoard.
 (define (chessBoard size) 
