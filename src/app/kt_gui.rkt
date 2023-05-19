@@ -47,7 +47,8 @@
 
 ; Creates the window that contains everything
 (define mainWindow 
-    (new frame% 
+    (new (class frame% (super-new)
+        (define/augment (on-close) (displayln "Exiting the Knight's Tour ♞ Visualizer...")))
         [label "Knight's Tour ♞"]
         [width 900]
         [height 915]
@@ -311,7 +312,7 @@
             )
             (drawSlider (send animation-controller get-value))
             ;sleep solves a drawing problem after draw canva
-            (sleep/yield 0.01)
+            (sleep/yield 1)
             ; Show the frame by calling its show method
             (send mainWindow show #t)
         )
