@@ -43,68 +43,218 @@
 (send whtWood-brush set-stipple (read-bitmap "../resources/whtWood.png"))
 (send drkWood-brush set-stipple (read-bitmap "../resources/drkWood.png"))
 
-;-------------------------Program window-------------------------;
 
-; Creates the window that contains everything
-(define mainWindow 
-    (new (class frame% (super-new)
-        (define/augment (on-close) (displayln "Exiting the Knight's Tour ♞ Visualizer...")))
-        [label "Knight's Tour ♞"]
-        [width 900]
-        [height 915]
-        [style '(no-resize-border)]
-    )
-)
 
-;-------------------------Aux-------------------------;
 
-(define dc null)
-
-#|
-    Quicksort adapted for a list with triplets.
-    @param lst: is a disordered list. Ej. '((1 50 50) (3 150 50) (2 100 50))
-    @return ordered list. Ex. '((1 50 50) (2 100 50) (3 150 50))
-|#
-(define (quicksort lst)
+(define (init)
     (cond
-        ((null? lst) lst)
-        (else
-            (append 
-                (quicksort (filter-less (cdr lst) (car lst)))
-                (list (car lst))
-                (quicksort (filter-greater (cdr lst) (car lst)))
+        ((and (not (null? ui-board-size)) (not (null? ui-board)) (not (null? ui-solution)))
+            ; Creates the window that contains everything
+            (define mainWindow 
+                (new (class frame% (super-new)
+                    (define/augment (on-close) 
+                        (displayln "Exiting the Knight's Tour ♞ Visualizer...\n")
+                        (set! ui-board-size null)
+                        (set! ui-board null)
+                        (set! ui-board-clip null)
+                        (set! ui-solution null)
+                        (set! horse-i 0)
+                        (set! horse-j 0)
+                    ))
+                    [label "Knight's Tour ♞"]
+                    [width 900]
+                    [height 915]
+                    [style '(no-resize-border)]
+                )
             )
+
+            (define dc null)
+
+            #|
+                Quicksort adapted for a list with triplets.
+                @param lst: is a disordered list. Ej. '((1 50 50) (3 150 50) (2 100 50))
+                @return ordered list. Ex. '((1 50 50) (2 100 50) (3 150 50))
+            |#
+            (define (quicksort lst)
+                (cond
+                    ((null? lst) lst)
+                    (else
+                        (append 
+                            (quicksort (filter-less (cdr lst) (car lst)))
+                            (list (car lst))
+                            (quicksort (filter-greater (cdr lst) (car lst)))
+                        )
+                    )
+                )
+            )
+
+
+            #|
+                Quicksort auxiliary, order the numbers that are lower than the pivot.
+                @param lst: is a disordered list.
+                @param pivot: element of the list selected to compare and order the list.
+                @return ordered list.
+            |#
+            (define (filter-less lst pivot)
+                (cond
+                    ((null? lst) lst)
+                    ((< (caar lst) (car pivot)) (append (list (car lst)) (filter-less (cdr lst) pivot)))
+                    (else (filter-less (cdr lst) pivot))
+                )
+            )
+
+
+            #|
+                Quicksort auxiliary, order the numbers that are higher than the pivot.
+                @param lst: is a disordered list.
+                @param pivot: element of the list selected to compare and order the list.
+                @return ordered list.
+            |#
+            (define (filter-greater lst pivot)
+                (cond
+                    ((null? lst) lst)
+                    ((>= (caar lst) (car pivot)) (append (list (car lst)) (filter-greater (cdr lst) pivot)))
+                    (else (filter-greater (cdr lst) pivot))
+                )
+            )
+
+            ;-------------------------Canvas-------------------------;
+
+            ; Draws the canvas background
+            (define (drawBackground)
+                (send dc set-brush wllppr-brush)
+                (send dc draw-rectangle 0 0 900 915)
+            )
+
+
+            #|
+                Draws an empty chessBoard of the size n*n
+                @param size: size n of the chessBoard.
+            |#
+            (define (drawChessBoard size)
+                (send dc set-pen "black" 3 'solid)
+                (send dc set-brush whtWood-brush)
+                (define wht_color #t)
+                ;Draws the chessboard
+                (for ([i (in-range 0 size)])
+                    ;draws each square in a row
+                    (for ([j (in-range 0 size)])
+                        (send dc draw-rectangle (+ 45 (* j 45)) (+ 15 (* i 45)) 45 45)
+                        ;alternate square colors
+                        (cond
+                            ((false? wht_color)
+                                (send dc set-brush whtWood-brush)
+                                (set! wht_color #t)
+                            )
+                            (else
+                                (send dc set-brush drkWood-brush)
+                                (set! wht_color #f)
+                            )
+                        )
+                    )
+                    ;if n is odd, change square color at the end of a row
+                    (cond
+                        ((even? size)
+                            (cond
+                                ((false? wht_color)
+                                (send dc set-brush whtWood-brush)
+                                (set! wht_color #t))
+                                (else
+                                (send dc set-brush drkWood-brush)
+                                (set! wht_color #f) )
+                            )
+                        )
+                    )
+                )
+            )
+
+
+            #|
+                Draws a given number in the given coordinates.
+                @param mov it is a list containing number, position_x and position_y. Ex. '(1 50 50)
+            |#
+            (define (drawNumber mov)
+                (send dc set-font (make-object font% 9 "Tahoma" 'default 'normal 'bold))
+                (send dc set-text-foreground "white")
+                (send dc draw-text (~v (car mov)) (cadr mov) (caddr mov) #f 0 0)
+            )
+
+
+            #|
+                Draws the horse in the given position.
+                @param mov it is a list containing number, position_x and position_y. Ex. '(1 50 50)
+            |#
+            (define (drawHorse mov)
+                (send dc set-font (make-object font% 24 "Tahoma" 'default 'normal 'bold))
+                (send dc set-text-foreground "white")
+                (set! horse-i (+ (cadr mov) 9))
+                (set! horse-j (+ (caddr mov) 11))
+                (send chessPanel refresh)
+                (sleep/yield 0.01)
+            )
+
+            #|
+                Draws the movements required when the slider is moved
+                @param n number selected in the slider.
+            |#
+            (define (drawSlider n)
+                (cond ((< 0 n) (drawHorse (getRow ui-board (- n 1)))))
+                (for ([i (in-range 0 n)]) (drawNumber (getRow ui-board i)))
+            )
+
+            ; Creates a panel for buttons and controls.
+            (define controlPanel 
+                (new vertical-panel% 
+                    [parent mainWindow]
+                    [alignment '(center center)]
+                )
+            )
+
+
+            ; Creates a panel for the chessBoard
+            (define chessPanel 
+                (new panel% 
+                    [parent controlPanel]
+                    [alignment '(center center)]
+                )
+            )
+
+            ; Creates a canvas to draw the chessBoard.
+            (define (chessBoard size) 
+                (new canvas% 
+                    [parent chessPanel]
+                    [paint-callback (lambda (canvas dc) 
+                                (drawBackground)
+                                (drawChessBoard size)
+                                (send dc set-text-foreground "white")
+                                (send dc set-font (make-object font% 24 "Tahoma" 'default 'normal 'bold))
+                                (send dc draw-text "♞" horse-i horse-j)
+                        )
+                    ]
+                )
+            )
+
+            ; Makes accesible the dc, to be able to draw from other functions.
+            (set! dc (send (chessBoard ui-board-size) get-dc))
+            ;Creates an ordered list with the movements and coordinates of the solution to draw easily
+            (set! ui-board (quicksort ui-board))
+            ; animation controller set-up
+            (define animation-controller 
+                (new slider% 
+                    [parent controlPanel]
+                    [label #f]
+                    [min-value 1]
+                    [max-value (expt ui-board-size 2)]
+                    [callback (lambda (slider event) (drawSlider (send slider get-value)))]
+                )
+            )
+            (drawSlider (send animation-controller get-value))
+            ;sleep solves a drawing problem after draw canva
+            (sleep/yield 1)
+            ; Show the frame by calling its show method
+            (send mainWindow show #t)
         )
-    )
-)
-
-
-#|
-    Quicksort auxiliary, order the numbers that are lower than the pivot.
-    @param lst: is a disordered list.
-    @param pivot: element of the list selected to compare and order the list.
-    @return ordered list.
-|#
-(define (filter-less lst pivot)
-    (cond
-        ((null? lst) lst)
-        ((< (caar lst) (car pivot)) (append (list (car lst)) (filter-less (cdr lst) pivot)))
-        (else (filter-less (cdr lst) pivot))
-    )
-)
-
-
-#|
-    Quicksort auxiliary, order the numbers that are higher than the pivot.
-    @param lst: is a disordered list.
-    @param pivot: element of the list selected to compare and order the list.
-    @return ordered list.
-|#
-(define (filter-greater lst pivot)
-    (cond
-        ((null? lst) lst)
-        ((>= (caar lst) (car pivot)) (append (list (car lst)) (filter-greater (cdr lst) pivot)))
-        (else (filter-greater (cdr lst) pivot))
+        (else (error "Knight's Tour ♞ Visualizer initialization failed\n"))
     )
 )
 
@@ -153,122 +303,6 @@
     )
 )
 
-;-------------------------Canvas-------------------------;
-
-; Draws the canvas background
-(define (drawBackground)
-    (send dc set-brush wllppr-brush)
-    (send dc draw-rectangle 0 0 900 915)
-)
-
-
-#|
-    Draws an empty chessBoard of the size n*n
-    @param size: size n of the chessBoard.
-|#
-(define (drawChessBoard size)
-    (send dc set-pen "black" 3 'solid)
-    (send dc set-brush whtWood-brush)
-    (define wht_color #t)
-    ;Draws the chessboard
-    (for ([i (in-range 0 size)])
-        ;draws each square in a row
-        (for ([j (in-range 0 size)])
-            (send dc draw-rectangle (+ 45 (* j 45)) (+ 15 (* i 45)) 45 45)
-            ;alternate square colors
-            (cond
-                ((false? wht_color)
-                    (send dc set-brush whtWood-brush)
-                    (set! wht_color #t)
-                )
-                (else
-                    (send dc set-brush drkWood-brush)
-                    (set! wht_color #f)
-                )
-            )
-        )
-        ;if n is odd, change square color at the end of a row
-        (cond
-            ((even? size)
-                (cond
-                    ((false? wht_color)
-                    (send dc set-brush whtWood-brush)
-                    (set! wht_color #t))
-                    (else
-                    (send dc set-brush drkWood-brush)
-                    (set! wht_color #f) )
-                )
-            )
-        )
-    )
-)
-
-
-#|
-    Draws a given number in the given coordinates.
-    @param mov it is a list containing number, position_x and position_y. Ex. '(1 50 50)
-|#
-(define (drawNumber mov)
-    (send dc set-font (make-object font% 9 "Tahoma" 'default 'normal 'bold))
-    (send dc set-text-foreground "white")
-    (send dc draw-text (~v (car mov)) (cadr mov) (caddr mov) #f 0 0)
-)
-
-
-#|
-    Draws the horse in the given position.
-    @param mov it is a list containing number, position_x and position_y. Ex. '(1 50 50)
-|#
-(define (drawHorse mov)
-    (send dc set-font (make-object font% 24 "Tahoma" 'default 'normal 'bold))
-    (send dc set-text-foreground "white")
-    (set! horse-i (+ (cadr mov) 9))
-    (set! horse-j (+ (caddr mov) 11))
-    (send chessPanel refresh)
-    (sleep/yield 0.01)
-)
-
-#|
-    Draws the movements required when the slider is moved
-    @param n number selected in the slider.
-|#
-(define (drawSlider n)
-    (cond ((< 0 n) (drawHorse (getRow ui-board (- n 1)))))
-    (for ([i (in-range 0 n)]) (drawNumber (getRow ui-board i)))
-)
-
-; Creates a panel for buttons and controls.
-(define controlPanel 
-    (new vertical-panel% 
-        [parent mainWindow]
-        [alignment '(center center)]
-    )
-)
-
-
-; Creates a panel for the chessBoard
-(define chessPanel 
-    (new panel% 
-        [parent controlPanel]
-        [alignment '(center center)]
-    )
-)
-
-; Creates a canvas to draw the chessBoard.
-(define (chessBoard size) 
-    (new canvas% 
-        [parent chessPanel]
-        [paint-callback (lambda (canvas dc) 
-                    (drawBackground)
-                    (drawChessBoard size)
-                    (send dc set-text-foreground "white")
-                    (send dc set-font (make-object font% 24 "Tahoma" 'default 'normal 'bold))
-                    (send dc draw-text "♞" horse-i horse-j)
-            )
-        ]
-    )
-)
-
 
 #|
     Creates a list of triplets with the moves of the solution and the coordinates to write them.
@@ -293,33 +327,6 @@
 )
 
 
-(define (play)
-    (cond
-        ((and (not (null? ui-board-size)) (not (null? ui-board)) (not (null? ui-solution)))
-            ; Makes accesible the dc, to be able to draw from other functions.
-            (set! dc (send (chessBoard ui-board-size) get-dc))
-            ;Creates an ordered list with the movements and coordinates of the solution to draw easily
-            (set! ui-board (quicksort ui-board))
-            ; animation controller set-up
-            (define animation-controller 
-                (new slider% 
-                    [parent controlPanel]
-                    [label #f]
-                    [min-value 1]
-                    [max-value (expt ui-board-size 2)]
-                    [callback (lambda (slider event) (drawSlider (send slider get-value)))]
-                )
-            )
-            (drawSlider (send animation-controller get-value))
-            ;sleep solves a drawing problem after draw canva
-            (sleep/yield 1)
-            ; Show the frame by calling its show method
-            (send mainWindow show #t)
-        )
-    )
-)
-
-
 (define (visualizer board-size solution board)
     (displayln "\nOpening the Knight's Tour ♞ Visualizer...")
     (displayln "\n>>> KT-Visualizer 💻 <<<")
@@ -330,5 +337,5 @@
     (set! ui-board-size board-size)
     (buildMovLst ui-board-size board)
     (set! ui-solution solution)
-    (play)
+    (init)
 )
