@@ -32,6 +32,7 @@
   However, a 3X3 or 4X4 board could never meet the condition of going through all the squares on the board.
   @param board-size exact-integer greater than 4
   @return boolean (true: the board size meets the conditions || false: the size doesn't meet the conditions) or raise-argument-error
+  @scheme validation (main)
 |#
 (define (valid-size? board-size)
   (cond
@@ -46,6 +47,7 @@
   @param knight-position list with two non-negative integers (zero and positive) as initial position of the knight with the format '(row column)
   @param board-size exact-integer greater than 4
   @return boolean (true: the position meets the conditions || false: the position doesn't meet the conditions) or raise-argument-error
+  @scheme validation (main)
 |#
 (define (valid-position? knight-position board-size)
   (cond
@@ -69,6 +71,7 @@
   @param board-size exact-integer greater than 4
   @param solution pair (row column) list as the solution structure
   @return boolean (true: the solution meets the conditions || false: the solution doesn't meet the conditions) or raise-argument-error
+  @scheme validation (main)
 |#
 (define (valid-solution? board-size solution)
   (cond
@@ -80,23 +83,13 @@
 
 
 #|
-  Checks if the move int is in range of board size.
-  @param move positive exact-integer as solution's move (n)
-  @param board matrix as the square board
-  @return boolean (true: the move meets the conditions || false: the move doesn't meet the conditions)
-|#
-(define (valid-move? move board)
-  (and (> move 0) (<= move (expt (length board) 2)))
-)
-
-
-#|
   Checks if the Knight's tour is posible, using the 
   premise "no complete tours exist for square boards of odd dimensions when the tour starts on an odd position (row + column)".
   To understand the premise check out the article at https://link.springer.com/chapter/10.1007/978-981-13-5802-9_16
   @param knight-position list with two non-negative integers (zero and positive) as initial position of the knight with the format '(row column)
   @param board-size exact-integer greater than 4
-  @return boolean (true: even board size or even position (row + column) at odd board size || false: odd position (row + column) at odd board size )
+  @return boolean (true: even board size or even position (row + column) at odd board size || false: odd position (row + column) at odd board size)
+  @scheme validation (main)
 |#
 (define (tour? knight-position board-size)
   (cond
@@ -111,6 +104,7 @@
   @param element list element
   @param array list
   @return boolean (true: if the element isn't part of array is available | false: if the element isn't part of array is not available)
+  @scheme validation (main)
 |#
 (define (available? element array)
   (cond
@@ -126,6 +120,8 @@
   @param size exact-integer greater than 4
   @param row empty list
   @return list as row
+  @scheme processing (aux)
+  @see generate-board
 |#
 (define (create-row size (row '()))
   (cond
@@ -141,6 +137,7 @@
   @param size exact-integer greater than 4
   @param board empty list
   @return matrix as the Knight's Tour board
+  @scheme processing (main)
 |#
 (define (create-board size (board '()))
   (cond
@@ -158,6 +155,8 @@
   @param col integer as col index
   @param row-updated empty list
   @return list as the board row updated
+  @scheme processing (aux)
+  @see assign-move
 |#
 (define (edit-position move position row (col 0) (row-updated '()))
   (cond
@@ -176,6 +175,8 @@
   @param row integer as row index
   @param board-updated empty list
   @return matrix as the solution matrix form
+  @scheme processing (aux)
+  @see read-solution
 |#
 (define (assign-move move position board (row 0) (board-updated '()))
   (cond
@@ -193,11 +194,13 @@
   @param board matrix to display the solution matrix form
   @param move positive exact-integer as solution's move (n)
   @return matrix as the solution matrix form
+  @scheme processing (aux)
+  @see generate-board
 |#
 (define (read-solution solution (board '()) (move 1))
   (cond
     ((null? solution) board)
-    ((not (valid-move? move board)) (raise-argument-error 'kt-read-solution "move doesn't meet the requirements" move))
+    ((not (and (> move 0) (<= move (expt (length board) 2)))) (raise-argument-error 'kt-read-solution "move doesn't meet the requirements" move))
     ((not (valid-position? (car solution) (length board))) (raise-argument-error 'kt-read-solution "position doesn't meet the requirements" (car solution)))
     (else (read-solution (cdr solution) (assign-move move (car solution) board) (+ move 1)))
   )
@@ -210,6 +213,7 @@
   @param board-size exact-integer greater than 4
   @param solution pair (row column) list as the solution structure
   @return matrix as the solution matrix form
+  @scheme processing (main)
 |#
 (define (generate-board board-size solution)
   (cond
@@ -225,6 +229,8 @@
   @param digits 
   @param row integer list as board row
   @return the row string format
+  @scheme processing (aux)
+  @see print-rows
 |#
 (define (print-cols digits row)
   (cond
@@ -242,6 +248,8 @@
   @param digits 
   @param board integer matrix
   @return matrix as the Knigh's Tour board
+  @scheme parsing (aux)
+  @see print-board
 |#
 (define (print-rows digits board)
   (cond
@@ -260,6 +268,7 @@
   Displays in terminal the board using print-rows and print-cols as aux functions.
   @param board integer matrix
   @return matrix string format as the Knigh's Tour board
+  @scheme parsing (main)
 |#
 (define (print-board board)
   (cond
@@ -277,6 +286,7 @@
   Displays in terminal the elements of the solutions list.
   @param solutions list of solutions
   @return solutions list string format
+  @scheme parsing (main)
 |#
 (define (print-solutions solutions)
   (cond
@@ -296,6 +306,8 @@
   @param nodes pair list as nodes
   @param node-index integer as node index
   @return pair as the node selected
+  @scheme processing (aux)
+  @see random-node
 |#
 (define (select-node node nodes (node-index 0))
   (cond
@@ -309,6 +321,7 @@
   Selects a node-index from the available node list and returns it.
   @param nodes pair list as the current node next nodes
   @return pair as the node selected
+  @scheme processing (main)
 |#
 (define (random-node nodes)
   (cond
@@ -323,6 +336,7 @@
   @param node list with two non-negative integers (zero and positive) as board position with the format '(row column) 
   @param graph as graph matrix form 
   @return pair list as the edges of the node
+  @scheme parsing (main)
 |#
 (define (edges node graph)
   (cond
@@ -338,6 +352,7 @@
   @param solution pair list as solution
   @param available empty list
   @return list with the available edges
+  @scheme processing (main)
 |#
 (define (available-edges edges solution (available '()))
   (cond
@@ -359,6 +374,7 @@
   @param board-size exact-integer greater than 4
   @param clean list without off-board positions
   @return pair list with possible L-pattern positions without off-board positions
+  @scheme processing (main)
 |#
 (define (filter-edges edges board-size (clean '()))
   (cond
@@ -384,6 +400,8 @@
   @param col non-negative integer [0, board-size] as col index
   @param board-size exact-integer greater than 4
   @return pair list with all (8) L-pattern positions
+  @scheme processing (aux)
+  @see get-edges
 |#
 (define (generate-edges row col board-size)
   (cond
@@ -412,6 +430,8 @@
   @param position list with two non-negative integers (zero and positive) as initial position (node) of the knight with the format '(row column)
   @param board-size exact-integer greater than 4
   @return pair list with the knight's possible positions as edges
+  @scheme processing (aux)
+  @see create-graph
 |#
 (define (get-edges position board-size)
   (cond
@@ -431,6 +451,7 @@
   @param node position list with two non-negative integers (zero and positive) as first board position with the format '(row column)
   @param graph empty list
   @return matrix as graph matrix form
+  @scheme processing (main)
 |#
 (define (create-graph board-size (node '(0 0)) (graph '()))
   (cond
@@ -467,6 +488,8 @@
   @param equal 
   @param greater 
   @return 
+  @scheme processing (aux)
+  @see sort-degrees
 |#
 (define (sort-degrees-aux degrees (pivot (second (car degrees))) (less '()) (equal '()) (greater '()))
   (cond 
@@ -490,6 +513,7 @@
   
   @param degrees 
   @return 
+  @scheme processing (main)
 |#
 (define (sort-degrees degrees)
   (cond 
@@ -506,6 +530,8 @@
   @param solution 
   @param degrees 
   @return 
+  @scheme processing (aux)
+  @see next-node
 |#
 (define (nodes-degree nodes graph solution (degrees '()))
   (cond
@@ -528,6 +554,8 @@
   @param min-degree 
   @param nodes 
   @return 
+  @scheme processing (aux)
+  @see next-node
 |#
 (define (nodes-min-degree degrees (min-degree (car degrees)) (nodes '()))
   (cond
@@ -542,6 +570,8 @@
   
   @param nodes 
   @return 
+  @scheme processing (aux)
+  @see next-node
 |#
 (define (choose-node nodes)
   (cond
@@ -557,6 +587,8 @@
   @param available-edges 
   @param solution 
   @return 
+  @scheme processing (aux)
+  @see generate-solution
 |#
 (define (next-node graph available-edges solution)
   (cond
@@ -573,6 +605,8 @@
   @param graph 
   @param solution 
   @return 
+  @scheme processing (aux)
+  @see create-solution
 |#
 (define (generate-solution board-size knight-position graph (solution '()))
   (cond
@@ -605,6 +639,7 @@
   @param graph 
   @param solution 
   @return 
+  @scheme processing (main)
 |#
 (define (create-solution board-size knight-position graph (solution (generate-solution board-size knight-position graph)))
   (cond
@@ -623,6 +658,8 @@
   @param solutions empty list
   @param solution 
   @return 
+  @scheme processing (aux)
+  @see solutionss
 |#
 (define (create-solutions n board-size knight-position graph (solutions '()) (solution (create-solution board-size knight-position graph)))
   (cond
@@ -645,6 +682,7 @@
   @param board-size 
   @param knight-position 
   @return 
+  @scheme processing (main)
 |#
 (define (solution (board-size 8) (knight-position '(0 0)))
   (cond
@@ -663,6 +701,7 @@
   @param board-size 
   @param knight-position 
   @return 
+  @scheme processing (main)
 |#
 (define (solutions (n 5) (board-size 8) (knight-position '(0 0)))
   (cond
@@ -681,6 +720,7 @@
   @param board-size 
   @param solution 
   @return 
+  @scheme parsing (main)
 |#
 (define (test (board-size 8) (solution (solution board-size '(0 0))))
   (cond 
@@ -697,6 +737,7 @@
   @param board-size 
   @param solution 
   @return 
+  @scheme parsing (main)
 |#
 (define (paint (board-size 8) (solution (solution board-size '(0 0))))
   (cond
@@ -706,30 +747,3 @@
     (else (visualizer board-size solution (generate-board board-size solution)))
   )
 )
-
-
-; TEST ----------------------------------------------------------------------------------------------------------------------------
-
-(define board-size 8)
-(define knight-position '(4 5))
-(define n-sol (* board-size 2))
-
-(displayln "\n>>> KT-Solution 💡 <<<\n")
-; (solution board-size knight-position)
-(solution)
-(newline)
-
-(displayln "\n>>> KT-Solutions 📦 <<<\n")
-; (solutions n-sol board-size knight-position)
-(solutions)
-(newline)
-
-(displayln "\n>>> KT-Test ✅ <<<\n")
-; (test board-size (solution board-size knight-position))
-(test)
-(newline)
-
-(displayln "\n>>> KT-Paint 🎨 <<<\n")
-; (paint board-size (solution board-size knight-position))
-(paint)
-(newline)
