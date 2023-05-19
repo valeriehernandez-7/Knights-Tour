@@ -487,7 +487,7 @@
   @param less pair list as the current node adjacent nodes degree less than the pivot degree
   @param equal pair list as the current node adjacent nodes degree equal to the pivot degree
   @param greater pair list as the current node adjacent nodes degree greater than the pivot degree
-  @return 
+  @return sorted degrees pair list as the current node adjacent nodes degree with '((node) degree) format
   @scheme processing (aux)
   @see sort-degrees
 |#
@@ -512,7 +512,7 @@
 #|
   
   @param degrees pair list as the current node adjacent nodes degree with '((node) degree) format 
-  @return 
+  @return sorted degrees pair list as the current node adjacent nodes degree with '((node) degree) format
   @scheme processing (main)
 |#
 (define (sort-degrees degrees)
@@ -529,7 +529,7 @@
   @param graph as graph matrix form
   @param solution pair '(row column) list as the solution structure
   @param degrees empty list
-  @return 
+  @return pair list as the current node adjacent nodes degree with '((node) degree) format
   @scheme processing (aux)
   @see next-node
 |#
@@ -553,7 +553,7 @@
   @param degrees pair list as the current node adjacent nodes degree with '((node) degree) format
   @param min-degree first element of the degrees list
   @param nodes empty list
-  @return 
+  @return pair list as the current node adjacent nodes with the lowest degree
   @scheme processing (aux)
   @see next-node
 |#
@@ -569,7 +569,7 @@
 #|
   
   @param nodes pair list as the current node available adjacent nodes
-  @return 
+  @return pair as the current node adjacent node with the lowest degree '(row column)
   @scheme processing (aux)
   @see next-node
 |#
@@ -586,7 +586,7 @@
   @param graph as graph matrix form
   @param available-edges 
   @param solution pair '(row column) list as the solution structure
-  @return 
+  @return pair as the current node adjacent node with the lowest degree '(row column)
   @scheme processing (aux)
   @see generate-solution
 |#
@@ -604,7 +604,7 @@
   @param knight-position list with two non-negative integers (zero and positive) as initial position of the knight with the format '(row column)
   @param graph as graph matrix form
   @param solution pair '(row column) list as the solution structure
-  @return 
+  @return pair '(row column) list as the solution structure
   @scheme processing (aux)
   @see create-solution
 |#
@@ -638,7 +638,7 @@
   @param knight-position list with two non-negative integers (zero and positive) as initial position of the knight with the format '(row column)
   @param graph as graph matrix form
   @param solution pair '(row column) list as the solution structure
-  @return 
+  @return pair '(row column) list as the solution structure
   @scheme processing (main)
 |#
 (define (create-solution board-size knight-position graph (solution (generate-solution board-size knight-position graph)))
@@ -657,7 +657,7 @@
   @param graph as graph matrix form
   @param solutions empty list
   @param solution pair '(row column) list as the solution structure
-  @return 
+  @return list of solutions
   @scheme processing (aux)
   @see solutionss
 |#
@@ -681,7 +681,7 @@
   
   @param board-size exact-integer greater than 4
   @param knight-position list with two non-negative integers (zero and positive) as initial position of the knight with the format '(row column)
-  @return 
+  @return pair '(row column) list
   @scheme processing (main)
 |#
 (define (solution (board-size 8) (knight-position '(0 0)))
@@ -700,7 +700,7 @@
   @param n exact-integer greater than 0 and less than (size * 2) as the number of solutions to be obtained
   @param board-size exact-integer greater than 4
   @param knight-position list with two non-negative integers (zero and positive) as initial position of the knight with the format '(row column)
-  @return 
+  @return pair '(row column) list
   @scheme processing (main)
 |#
 (define (solutions (n 5) (board-size 8) (knight-position '(0 0)))
@@ -719,7 +719,7 @@
   
   @param board-size exact-integer greater than 4
   @param solution pair '(row column) list as the solution structure
-  @return 
+  @return matrix as the solution matrix string form
   @scheme parsing (main)
 |#
 (define (test (board-size 8) (solution (solution board-size '(0 0))))
@@ -736,7 +736,7 @@
   
   @param board-size exact-integer greater than 4 and less than 19
   @param solution pair '(row column) list as the solution structure
-  @return 
+  @return racket gui frame with a solution matrix form viewer
   @scheme parsing (main)
 |#
 (define (paint (board-size 8) (solution (solution board-size '(0 0))))
