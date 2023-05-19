@@ -69,7 +69,7 @@
   Checks if the solution is a square board complete tour. To be a complete tour the provided solution
   must have (size * size) elements, this means all the board positions are visited.
   @param board-size exact-integer greater than 4
-  @param solution pair (row column) list as the solution structure
+  @param solution pair '(row column) list as the solution structure
   @return boolean (true: the solution meets the conditions || false: the solution doesn't meet the conditions) or raise-argument-error
   @scheme validation (main)
 |#
@@ -190,7 +190,7 @@
   Retrieves the Knight´s Tour solution and updates a matrix with the solution's move number.
   Assumes that the solution is presented with the pairs in the order that the Knight visits the position, 
   with the first pair being the initial position and the last pair being the final position.
-  @param solution pair (row column) list as the solution structure
+  @param solution pair '(row column) list as the solution structure
   @param board matrix to display the solution matrix form
   @param move positive exact-integer as solution's move (n)
   @return matrix as the solution matrix form
@@ -211,7 +211,7 @@
   Generates a matrix as the square board of specific 
   size with the given solution only if the requirements are met.
   @param board-size exact-integer greater than 4
-  @param solution pair (row column) list as the solution structure
+  @param solution pair '(row column) list as the solution structure
   @return matrix as the solution matrix form
   @scheme processing (main)
 |#
@@ -319,7 +319,7 @@
 
 #|
   Selects a node-index from the available node list and returns it.
-  @param nodes pair list as the current node next nodes
+  @param nodes pair list as the current node adjacent nodes
   @return pair as the node selected
   @scheme processing (main)
 |#
@@ -334,7 +334,7 @@
 #|
   Walk through the graph looking for the node's edges and returns them.
   @param node list with two non-negative integers (zero and positive) as board position with the format '(row column) 
-  @param graph as graph matrix form 
+  @param graph as graph matrix form
   @return pair list as the edges of the node
   @scheme parsing (main)
 |#
@@ -349,7 +349,7 @@
 #|
   Filters the edges returning only the available edges using the available? aux function.
   @param edges pair list as edges
-  @param solution pair list as solution
+  @param solution pair '(row column) list as the solution structure
   @param available empty list
   @return list with the available edges
   @scheme processing (main)
@@ -482,11 +482,11 @@
 
 #|
   
-  @param degrees 
-  @param pivot 
-  @param less 
-  @param equal 
-  @param greater 
+  @param degrees pair list as the current node adjacent nodes degree with '((node) degree) format 
+  @param pivot djacent node degree
+  @param less pair list as the current node adjacent nodes degree less than the pivot degree
+  @param equal pair list as the current node adjacent nodes degree equal to the pivot degree
+  @param greater pair list as the current node adjacent nodes degree greater than the pivot degree
   @return 
   @scheme processing (aux)
   @see sort-degrees
@@ -511,7 +511,7 @@
 
 #|
   
-  @param degrees 
+  @param degrees pair list as the current node adjacent nodes degree with '((node) degree) format 
   @return 
   @scheme processing (main)
 |#
@@ -525,10 +525,10 @@
 
 #|
   
-  @param nodes 
-  @param graph 
-  @param solution 
-  @param degrees 
+  @param nodes pair list as the current node adjacent nodes
+  @param graph as graph matrix form
+  @param solution pair '(row column) list as the solution structure
+  @param degrees empty list
   @return 
   @scheme processing (aux)
   @see next-node
@@ -550,9 +550,9 @@
 
 #|
   
-  @param degrees 
-  @param min-degree 
-  @param nodes 
+  @param degrees pair list as the current node adjacent nodes degree with '((node) degree) format
+  @param min-degree first element of the degrees list
+  @param nodes empty list
   @return 
   @scheme processing (aux)
   @see next-node
@@ -568,7 +568,7 @@
 
 #|
   
-  @param nodes 
+  @param nodes pair list as the current node available adjacent nodes
   @return 
   @scheme processing (aux)
   @see next-node
@@ -583,9 +583,9 @@
 
 #|
   
-  @param graph 
+  @param graph as graph matrix form
   @param available-edges 
-  @param solution 
+  @param solution pair '(row column) list as the solution structure
   @return 
   @scheme processing (aux)
   @see generate-solution
@@ -600,10 +600,10 @@
 
 #|
   
-  @param board-size 
-  @param knight-position 
-  @param graph 
-  @param solution 
+  @param board-size exact-integer greater than 4
+  @param knight-position list with two non-negative integers (zero and positive) as initial position of the knight with the format '(row column)
+  @param graph as graph matrix form
+  @param solution pair '(row column) list as the solution structure
   @return 
   @scheme processing (aux)
   @see create-solution
@@ -634,10 +634,10 @@
 
 #|
   
-  @param board-size 
-  @param knight-position 
-  @param graph 
-  @param solution 
+  @param board-size exact-integer greater than 4
+  @param knight-position list with two non-negative integers (zero and positive) as initial position of the knight with the format '(row column)
+  @param graph as graph matrix form
+  @param solution pair '(row column) list as the solution structure
   @return 
   @scheme processing (main)
 |#
@@ -651,12 +651,12 @@
 
 #|
   
-  @param n 
-  @param board-size 
-  @param knight-position 
-  @param graph 
+  @param n exact-integer greater than 0 and less than (size * 2) as the number of solutions to be obtained
+  @param board-size exact-integer greater than 4
+  @param knight-position list with two non-negative integers (zero and positive) as initial position of the knight with the format '(row column)
+  @param graph as graph matrix form
   @param solutions empty list
-  @param solution 
+  @param solution pair '(row column) list as the solution structure
   @return 
   @scheme processing (aux)
   @see solutionss
@@ -679,8 +679,8 @@
 
 #|
   
-  @param board-size 
-  @param knight-position 
+  @param board-size exact-integer greater than 4
+  @param knight-position list with two non-negative integers (zero and positive) as initial position of the knight with the format '(row column)
   @return 
   @scheme processing (main)
 |#
@@ -697,9 +697,9 @@
 
 #|
   
-  @param n 
-  @param board-size 
-  @param knight-position 
+  @param n exact-integer greater than 0 and less than (size * 2) as the number of solutions to be obtained
+  @param board-size exact-integer greater than 4
+  @param knight-position list with two non-negative integers (zero and positive) as initial position of the knight with the format '(row column)
   @return 
   @scheme processing (main)
 |#
@@ -717,8 +717,8 @@
 
 #|
   
-  @param board-size 
-  @param solution 
+  @param board-size exact-integer greater than 4
+  @param solution pair '(row column) list as the solution structure
   @return 
   @scheme parsing (main)
 |#
@@ -734,8 +734,8 @@
 
 #|
   
-  @param board-size 
-  @param solution 
+  @param board-size exact-integer greater than 4 and less than 19
+  @param solution pair '(row column) list as the solution structure
   @return 
   @scheme parsing (main)
 |#
