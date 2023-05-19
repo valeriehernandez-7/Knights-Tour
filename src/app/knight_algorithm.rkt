@@ -646,7 +646,7 @@
   @param knight-position 
   @return 
 |#
-(define (solution board-size knight-position)
+(define (solution (board-size 8) (knight-position '(0 0)))
   (cond
     ((or (null? board-size) (null? knight-position)) (error "kt-solution arguments must be non-null"))
     ((not (valid-size? board-size)) (raise-argument-error 'kt-solution "board-size doesn't meet the requirements" board-size))
@@ -664,7 +664,7 @@
   @param knight-position 
   @return 
 |#
-(define (solutions n board-size knight-position)
+(define (solutions (n 5) (board-size 8) (knight-position '(0 0)))
   (cond
     ((or (null? board-size) (null? knight-position)) (error "kt-solutions arguments must be non-null"))
     ((or (not (exact-positive-integer? n)) (> n (* board-size 2))) (raise-argument-error 'kt-solutions "n doesn't meet the requirements" n))
@@ -682,7 +682,7 @@
   @param solution 
   @return 
 |#
-(define (test board-size solution)
+(define (test (board-size 8) (solution (solution board-size '(0 0))))
   (cond 
     ((or (null? board-size) (null? solution)) (error "kt-test arguments must be non-null"))
     ((not (valid-size? board-size)) (raise-argument-error 'kt-test "board-size doesn't meet the requirements" board-size))
@@ -698,10 +698,10 @@
   @param solution 
   @return 
 |#
-(define (paint board-size solution)
+(define (paint (board-size 8) (solution (solution board-size '(0 0))))
   (cond
     ((or (null? board-size) (null? solution)) (error "kt-paint arguments must be non-null"))
-    ((not (valid-size? board-size)) (raise-argument-error 'kt-paint "board-size doesn't meet the requirements" board-size))
+    ((or (not (valid-size? board-size)) (> board-size 18)) (raise-argument-error 'kt-paint "board-size doesn't meet the requirements" board-size))
     ((not (valid-solution? board-size solution)) (raise-argument-error 'kt-paint "solution doesn't meet the requirements" solution))
     (else (visualizer board-size solution (generate-board board-size solution)))
   )
@@ -710,31 +710,26 @@
 
 ; TEST ----------------------------------------------------------------------------------------------------------------------------
 
-#|
-       0  1  2  3  4
-  0  (00 00 00 00 00)
-  1  (00 00 00 00 00)
-  2  (00 00 00 00 00)
-  3  (00 00 00 00 00)
-  4  (00 00 00 00 00)
-|#
-
-(define board-size 5)
-(define knight-position '(2 2))
+(define board-size 8)
+(define knight-position '(4 5))
 (define n-sol (* board-size 2))
 
 (displayln "\n>>> KT-Solution 💡 <<<\n")
-(solution board-size knight-position)
+; (solution board-size knight-position)
+(solution)
 (newline)
 
 (displayln "\n>>> KT-Solutions 📦 <<<\n")
-(solutions n-sol board-size knight-position)
+; (solutions n-sol board-size knight-position)
+(solutions)
 (newline)
 
 (displayln "\n>>> KT-Test ✅ <<<\n")
-(test board-size (solution board-size knight-position))
+; (test board-size (solution board-size knight-position))
+(test)
 (newline)
 
 (displayln "\n>>> KT-Paint 🎨 <<<\n")
-(paint board-size (solution board-size knight-position))
+; (paint board-size (solution board-size knight-position))
+(paint)
 (newline)
