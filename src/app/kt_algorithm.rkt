@@ -481,7 +481,7 @@
 
 
 #|
-  
+  Sorts the degrees pair list based on the pivot
   @param degrees pair list as the current node adjacent nodes degree with '((node) degree) format 
   @param pivot djacent node degree
   @param less pair list as the current node adjacent nodes degree less than the pivot degree
@@ -510,7 +510,7 @@
 
 
 #|
-  
+  Applies a QuickSort algorithm to the given degrees list and return it.
   @param degrees pair list as the current node adjacent nodes degree with '((node) degree) format 
   @return sorted degrees pair list as the current node adjacent nodes degree with '((node) degree) format
   @scheme processing (main)
@@ -524,7 +524,7 @@
 
 
 #|
-  
+  Gets the current node adjacent nodes degree
   @param nodes pair list as the current node adjacent nodes
   @param graph as graph matrix form
   @param solution pair '(row column) list as the solution structure
@@ -549,7 +549,7 @@
 
 
 #|
-  
+  Gets the current node adjacent nodes with the lowest degree
   @param degrees pair list as the current node adjacent nodes degree with '((node) degree) format
   @param min-degree first element of the degrees list
   @param nodes empty list
@@ -567,7 +567,7 @@
 
 
 #|
-  
+  Gets the current node adjacent node with the lowest degree
   @param nodes pair list as the current node available adjacent nodes
   @return pair as the current node adjacent node with the lowest degree '(row column)
   @scheme processing (aux)
@@ -582,7 +582,7 @@
 
 
 #|
-  
+  Gets the next node wtih the lowest degree
   @param graph as graph matrix form
   @param available-edges 
   @param solution pair '(row column) list as the solution structure
@@ -599,7 +599,7 @@
 
 
 #|
-  
+  Generates a list as the solution structure
   @param board-size exact-integer greater than 4
   @param knight-position list with two non-negative integers (zero and positive) as initial position of the knight with the format '(row column)
   @param graph as graph matrix form
@@ -633,7 +633,7 @@
 
 
 #|
-  
+  Creates a solution list structure 
   @param board-size exact-integer greater than 4
   @param knight-position list with two non-negative integers (zero and positive) as initial position of the knight with the format '(row column)
   @param graph as graph matrix form
@@ -650,7 +650,7 @@
 
 
 #|
-  
+  Creates a list of solutions
   @param n exact-integer greater than 0 and less than (size * 2) as the number of solutions to be obtained
   @param board-size exact-integer greater than 4
   @param knight-position list with two non-negative integers (zero and positive) as initial position of the knight with the format '(row column)
@@ -678,7 +678,7 @@
 
 
 #|
-  
+  Commands the generation of a solution
   @param board-size exact-integer greater than 4
   @param knight-position list with two non-negative integers (zero and positive) as initial position of the knight with the format '(row column)
   @return pair '(row column) list
@@ -696,7 +696,7 @@
 
 
 #|
-  
+  Commands the generation of a list of solutions
   @param n exact-integer greater than 0 and less than (size * 2) as the number of solutions to be obtained
   @param board-size exact-integer greater than 4
   @param knight-position list with two non-negative integers (zero and positive) as initial position of the knight with the format '(row column)
@@ -716,7 +716,7 @@
 
 
 #|
-  
+  Creates a matrix with a given solution.
   @param board-size exact-integer greater than 4
   @param solution pair '(row column) list as the solution structure
   @return matrix as the solution matrix string form
@@ -733,7 +733,7 @@
 
 
 #|
-  
+  Calls the GUI to draw a given matrix.
   @param board-size exact-integer greater than 4 and less than 19
   @param solution pair '(row column) list as the solution structure
   @return racket gui frame with a solution matrix form viewer
