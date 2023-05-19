@@ -1,6 +1,6 @@
 #lang racket
 
-(require "knight_gui.rkt")
+(require "kt_gui.rkt")
 
 #|
   Sebastián M. Chen Cerdas (https://github.com/seballoll)
@@ -23,7 +23,7 @@
 |#
 
 
-(displayln "\nKnight's Tour 🐴\n")
+(displayln "\nKnight's Tour ♞\n")
 
 
 #|
@@ -689,7 +689,7 @@
     ((or (null? board-size) (null? knight-position)) (error "kt-solution arguments must be non-null"))
     ((not (valid-size? board-size)) (raise-argument-error 'kt-solution "board-size doesn't meet the requirements" board-size))
     ((not (valid-position? knight-position board-size )) (raise-argument-error 'kt-solution "position doesn't meet the requirements" knight-position))
-    ((not (tour? knight-position board-size)) (displayln (string-append "A complete Knight's Tour don't exist from odd position '" (~a knight-position) " in odd square board size '(" (~a board-size) ") 🐴\n")) '())
+    ((not (tour? knight-position board-size)) (displayln (string-append "A complete Knight's Tour don't exist from odd position '" (~a knight-position) " in odd square board size '(" (~a board-size) ") ♞\n")) '())
     (else (create-solution board-size knight-position (create-graph board-size)))
   )
 )
@@ -709,7 +709,7 @@
     ((or (not (exact-positive-integer? n)) (> n (* board-size 2))) (raise-argument-error 'kt-solutions "n doesn't meet the requirements" n))
     ((not (valid-size? board-size)) (raise-argument-error 'kt-solutions "board-size doesn't meet the requirements" board-size))
     ((not (valid-position? knight-position board-size )) (raise-argument-error 'kt-solutions "position doesn't meet the requirements" knight-position))
-    ((not (tour? knight-position board-size)) (displayln (string-append "A complete Knight's Tour don't exist from odd position '" (~a knight-position) " in odd square board size '(" (~a board-size) ") 🐴\n")) '())
+    ((not (tour? knight-position board-size)) (displayln (string-append "A complete Knight's Tour don't exist from odd position '" (~a knight-position) " in odd square board size '(" (~a board-size) ") ♞\n")) '())
     (else (displayln "(")(print-solutions (create-solutions n board-size knight-position (create-graph board-size)))(displayln ")"))
   )
 )

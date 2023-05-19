@@ -48,7 +48,7 @@
 ; Creates the window that contains everything
 (define mainWindow 
     (new frame% 
-        [label "Knight's Tour 🐴"]
+        [label "Knight's Tour ♞"]
         [width 900]
         [height 915]
         [style '(no-resize-border)]
@@ -320,7 +320,7 @@
 
 
 (define (visualizer board-size solution board)
-    (displayln "\nOpening the Knight's Tour 🐴 Visualizer...")
+    (displayln "\nOpening the Knight's Tour ♞ Visualizer...")
     (displayln "\n>>> KT-Visualizer 💻 <<<")
     (display "'board-size'\t: ")(displayln board-size)
     (display "'solution'\t: ")(displayln solution)
