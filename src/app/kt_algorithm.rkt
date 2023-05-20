@@ -716,7 +716,7 @@
 
 
 #|
-  Creates a matrix with a given solution.
+  Validates the given solution size, generate a Matrix with the given solution and prints the Matrix.
   @param board-size exact-integer greater than 4
   @param solution pair '(row column) list as the solution structure
   @return matrix as the solution matrix string form
