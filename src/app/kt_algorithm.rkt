@@ -678,7 +678,7 @@
 
 
 #|
-  Commands the generation of a solution
+  Generates a single solution for Knight's Tour
   @param board-size exact-integer greater than 4
   @param knight-position list with two non-negative integers (zero and positive) as initial position of the knight with the format '(row column)
   @return pair '(row column) list
@@ -696,7 +696,7 @@
 
 
 #|
-  Commands the generation of a list of solutions
+  Generates a list with as many valid solutions as specified
   @param n exact-integer greater than 0 and less than (size * 2) as the number of solutions to be obtained
   @param board-size exact-integer greater than 4
   @param knight-position list with two non-negative integers (zero and positive) as initial position of the knight with the format '(row column)
