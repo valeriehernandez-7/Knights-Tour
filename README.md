@@ -2,15 +2,20 @@
 
 ### DEMO
 
-![DEMO](https://github.com/valeriehernandez-7/Knight/blob/main/docs/DEMO.gif)
+![DEMO](https://github.com/valeriehernandez-7/Knights-Tour/blob/main/docs/kt_demo.gif)
 
 ##
 
 ### About
 
-_description..._
+_A knight's tour is a chessboard move sequence where the knight visits every square exactly once. The tour is closed if the knight stops on a square that is one knight's move from the beginning square, otherwise, it is open. The closed tour is implemented in this project using the Warnsdorff's rule. Where the knight is manipulated in such a way that it always goes to the nopde with the fewest onward moves. We exclude the nodes that return to a previously visited nodes when computing the number of onward moves for each candidate board square._
 
-> Check out more information at [Knight's Tour 🐴 Docs](https://github.com/valeriehernandez-7/Knight/blob/main/docs)
+### Development environment
+
+- OS : [Windows 10](https://www.microsoft.com/es-es/software-download/windows10)
+- IDE : [DrRacket](http://racket-lang.org/download/)
+
+> Check out more information at [Knight's Tour 🐴 Docs](https://github.com/valeriehernandez-7/Knights-Tour/tree/main/docs)
 
 ### Contributors
 
